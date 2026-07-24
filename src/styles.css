@@ -1,0 +1,46 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+	min-height: 100%;
+    font-family: "Determination Sans", sans-serif;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.audioClickPrompt {
+	position: fixed;
+	display: flex;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #00000063;
+	color: #ffffff;
+	align-items: center;
+	justify-content: center;
+	font-size: 2em;
+	cursor: pointer;
+}
+
+@font-face {
+	font-family: "Determination Mono";
+	src: url("./assets/font/DeterminationMonoWeb.woff");
+	font-weight: 100 1000;
+}
+@font-face {
+	font-family: "Determination Sans";
+	src: url("./assets/font/DeterminationSansWeb.woff");
+	font-weight: 100 1000;
+}
+
+button {
+    font-size: inherit;
+    font-family: inherit;
+    border: none;
+}
