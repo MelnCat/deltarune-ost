@@ -1,12 +1,28 @@
+const songs = import.meta.glob("./*", { base: "../assets/music", eager: true });
+const sounds = import.meta.glob("./*", { base: "../assets/audiogroup_default", eager: true });
+const extras = import.meta.glob("./*", { base: "../assets/extra", eager: true });
+
 export class Track {
 	name: string;
 	filename: string;
 	album: string[];
+	paths: string[];
 
 	constructor(args: TrackArgs) {
 		this.name = args.name;
 		this.filename = args.filename;
 		this.album = typeof args.album === "string" ? [args.album] : args.album;
+		this.paths = this.filename.split(", ").map(x => {
+			const found = songs[`./${x}.ogg`] ?? sounds[`./${x}.wav`] ?? extras[`./${x}.wav`];
+			if (!found && x === "snd_usefountain") {
+				throw new Error("yeah you forgot snd_usefountain. it's in the chapter folders");
+			}
+            if (!found) {
+                console.warn(`No ${x}`)
+                return "";
+            }
+			return (found as { default: string }).default;
+		});
 	}
 }
 
@@ -63,7 +79,7 @@ register({ name: "Weird Birds", filename: "bird", album: "DELTARUNE Chapter 1 OS
 register({ name: "You Can Always Come Home", filename: "home", album: ["DELTARUNE Chapter 1 OST", "DELTARUNE Chapter 2 OST"] });
 register({
 	name: "Your Power",
-	filename: "snd_usefountain, <!-- ''(Located in the folders of each Chapter.)'' -->",
+	filename: "snd_usefountain",
 	album: "DELTARUNE Chapter 1 OST",
 });
 register({ name: "A CYBER'S WORLD?", filename: "cyber", album: "DELTARUNE Chapter 2 OST" });

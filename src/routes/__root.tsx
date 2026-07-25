@@ -4,7 +4,6 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import appCss from "../styles.css?url";
 import { useState } from "react";
-import { AudioEnabledContext } from "#/util/bgm";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -38,14 +37,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				{audioEnabled || (
+				{audioEnabled ? (
+					children
+				) : (
 					<div className="audioClickPrompt" onClick={() => setAudioEnabled(true)}>
 						Click to enable audio
 					</div>
 				)}
-				<AudioEnabledContext.Provider value={audioEnabled}>
-					{children}
-				</AudioEnabledContext.Provider>
 				<TanStackDevtools
 					config={{
 						position: "bottom-right",

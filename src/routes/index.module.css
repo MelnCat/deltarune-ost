@@ -1,15 +1,68 @@
+@property --t {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 0;
+}
+
 .title {
-    font-size: 2.5em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-	img {
+	font-size: 2.5em;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	.logo {
 		width: 25em;
-        image-rendering: pixelated;
+		position: relative;
+		display: grid;
+		align-items: stretch;
+		justify-content: stretch;
+		& > * {
+			grid-area: 1 / 1;
+		}
+		img {
+			width: 100%;
+			image-rendering: pixelated;
+			display: block;
+		}
+		.logoOverlay {
+			width: 100%;
+			height: 100%;
+			mask-image: url("../assets/img/deltarune_no_heart.svg");
+			mask-size: 100% 100%;
+			animation: overlay-fade 2s linear 1s forwards;
+		}
+		.logoSolidOverlay {
+			background-color: #ffffff;
+			opacity: var(--t);
+		}
+		.logoImageOverlay {
+			background-image: url("../assets/img/star.gif");
+			background-size: 1em 1em;
+			animation: scroll-bg 1s infinite linear, overlay-fade 2s linear 1s forwards;
+			opacity: calc(1 - var(--t));
+		}
 	}
-    h1 {
-        margin: 0;
-        margin-top: -0.5em;
-        color: #ffff00;
-    }
+	h1 {
+		margin: 0;
+		margin-top: -0.5em;
+		color: #ffff00;
+		z-index: 1;
+	}
+}
+
+@keyframes overlay-fade {
+	from {
+		--t: 0;
+	}
+	to {
+		--t: 1;
+	}
+}
+
+@keyframes scroll-bg {
+	from {
+		background-position: 0 0;
+	}
+	to {
+		background-position: 1em 1em;
+	}
 }

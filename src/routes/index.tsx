@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import styles from "./index.module.css";
-import deltarune from "@/assets/img/deltarune.svg";
+import deltaruneHeart from "@/assets/img/deltarune_heart.svg";
 import { useBgm } from "#/util/bgm";
 import ch3_board3 from "../assets/music/ch3_board3.ogg";
 
@@ -11,7 +11,11 @@ function App() {
 	return (
 		<main>
             <div className={styles.title}>
-                <img src={deltarune} alt="DELTARUNE" />
+                <div className={styles.logo}>
+                    <img src={deltaruneHeart} alt="DELTARUNE" />
+                    <div className={`${styles.logoOverlay} ${styles.logoSolidOverlay}`}></div>
+                    <div className={`${styles.logoOverlay} ${styles.logoImageOverlay}`}></div>
+                </div>
                 <h1>Soundtrack Trivia</h1>
                 <Link to="/trivia">Trivia</Link>
             </div>
