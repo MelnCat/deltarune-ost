@@ -7,6 +7,7 @@ export class Track {
 	filename: string;
 	album: string[];
 	paths: string[];
+	chapters: number[];
 
 	constructor(args: TrackArgs) {
 		this.name = args.name;
@@ -17,12 +18,13 @@ export class Track {
 			if (!found && x === "snd_usefountain") {
 				throw new Error("yeah you forgot snd_usefountain. it's in the chapter folders");
 			}
-            if (!found) {
-                console.warn(`No ${x}`)
-                return "";
-            }
+			if (!found) {
+				console.warn(`No ${x}`);
+				return "";
+			}
 			return (found as { default: string }).default;
 		});
+		this.chapters = args.chapters ?? [];
 	}
 }
 
@@ -30,6 +32,7 @@ interface TrackArgs {
 	name: string;
 	filename: string;
 	album: string | string[];
+	chapters?: number[];
 }
 
 export const tracks: Track[] = [];
@@ -38,7 +41,7 @@ const register = (args: TrackArgs) => {
 	tracks.push(new Track(args));
 };
 
-register({ name: "A Town Called Hometown", filename: "town", album: "DELTARUNE Chapter 1 OST" });
+register({ name: "A Town Called Hometown", filename: "town", album: "DELTARUNE Chapter 1 OST", chapters: [1, 2] });
 register({ name: "ANOTHER HIM", filename: "AUDIO_ANOTHERHIM", album: "DELTARUNE Chapter 1 OST" });
 register({ name: "April 2012", filename: "april_2012", album: "DELTARUNE Chapter 1 OST" });
 register({ name: "Basement", filename: "basement", album: "DELTARUNE Chapter 1 OST" });
