@@ -48,6 +48,14 @@
 	}
 }
 
+.panes {
+    display: grid;
+    grid-template-columns: 10em 12em;
+}
+.description {
+    color: #888888;
+}
+
 @keyframes overlay-fade {
 	from {
 		--t: 0;

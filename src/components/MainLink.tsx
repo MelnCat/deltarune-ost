@@ -1,34 +1,39 @@
-import { useRef, useState } from "react";
+import { act, useRef, useState } from "react";
 import styles from "./MainLink.module.css";
 import { useEventListener } from "usehooks-ts";
 import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import soul from "@/assets/img/soul/soul.png";
 
-let stopHover = () => {};
-
-export const MainLink = ({ children, to }: { children: React.ReactNode; to: string }) => {
-	const ref = useRef<HTMLDivElement>(null!);
-	const [hover, setHover] = useState(false);
+export const MainLink = ({
+	children,
+	to,
+	active = false,
+	onHover,
+}: {
+	children: React.ReactNode;
+	to: string;
+	active?: boolean;
+	onHover?: () => void;
+}) => {
+	const ref = useRef<HTMLAnchorElement>(null!);
 	useEventListener(
 		"mouseover",
 		() => {
-			stopHover();
-			stopHover = () => setHover(false);
-			setHover(true);
+			onHover?.();
 		},
 		ref,
 	);
 	return (
-		<div className={styles.link} data-active={hover || null} ref={ref}>
+		<div className={styles.link} data-active={active || null} >
 			<div className={styles.soulContainer}>
-				{hover && (
+				{active && (
 					<motion.div transition={{ ease: "linear", duration: 0.1 }} layout layoutId="soul" className={styles.soul}>
 						<img src={soul} alt="soul" />
 					</motion.div>
 				)}
 			</div>
-			<Link to={to}>{children}</Link>
+			<Link to={to} ref={ref}>{children}</Link>
 		</div>
 	);
 };
