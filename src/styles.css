@@ -14,6 +14,10 @@ body,
 	color: #ffffff;
 }
 
+body {
+    height: 100dvh;
+}
+
 .audioClickPrompt {
 	position: fixed;
 	display: flex;
@@ -44,4 +48,8 @@ button {
 	font-size: inherit;
 	font-family: inherit;
 	border: none;
+}
+
+h1 {
+    margin: 0;
 }

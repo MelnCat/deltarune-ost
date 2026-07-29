@@ -20,6 +20,7 @@
 		"nitro": "3.0.260610-beta",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
+		"ts-pattern": "^5.9.0",
 		"usehooks-ts": "^3.1.1"
 	},
 	"devDependencies": {

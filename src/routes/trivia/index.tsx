@@ -1,8 +1,12 @@
 import { AudioVisualizer } from "#/components/AudioVisualizer";
+import { VolumeSlider } from "#/components/VolumeSlider";
 import { Track, tracks } from "#/data/ost";
 import { normalizeText } from "#/util/text";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
+import styles from "./index.module.css";
+import { match } from "ts-pattern";
 
 export const Route = createFileRoute("/trivia/")({
 	component: RouteComponent,
@@ -11,6 +15,9 @@ export const Route = createFileRoute("/trivia/")({
 function RouteComponent() {
 	const audioCtx = useRef<AudioContext | null>(null);
 	const analyzer = useRef<AnalyserNode | null>(null);
+	const gain = useRef<GainNode | null>(null);
+	const [volume, setVolume] = useLocalStorage("volume", 100);
+
 	const [analyzerState, setAnalyzerState] = useState<AnalyserNode | null>(null);
 	const [track, setTrack] = useState<Track | null>(null);
 	type LoadState = "none" | "loading" | "done" | "correct" | "give_up";
@@ -39,7 +46,10 @@ function RouteComponent() {
 			}
 			currentTime += buffer.duration;
 		}
-		analyzer.current.connect(audioCtx.current.destination);
+		gain.current = ctx.createGain();
+		gain.current.gain.value = volume / 100;
+		analyzer.current.connect(gain.current);
+		gain.current.connect(audioCtx.current.destination);
 		setLoadState("done");
 	};
 	const stop = () => {
@@ -63,6 +73,10 @@ function RouteComponent() {
 			stop();
 		};
 	}, []);
+	useEffect(() => {
+		if (!gain.current) return;
+		gain.current.gain.value = volume / 100;
+	}, [volume]);
 	const submit: React.SubmitEventHandler<HTMLFormElement> = e => {
 		e.preventDefault();
 		if (!track) return;
@@ -75,48 +89,46 @@ function RouteComponent() {
 		setLoadState("give_up");
 		stop();
 	};
-	if (loadState === "none") {
-		return (
-			<div>
-				<h1></h1>
-			</div>
-		);
-	}
-	if (loadState === "loading") {
-		return (
-			<div>
-				<h1>Loading</h1>
-			</div>
-		);
-	}
-	if (loadState === "correct") {
-		return (
+	const body = match(loadState)
+		.with("none", () => null)
+		.with("loading", () => <h1>Loading</h1>)
+		.with("done", () => (
+			<>
+				<h1>Guess the currently playing song</h1>
+				<form onSubmit={submit}>
+					<input value={guess} onChange={e => setGuess(e.target.value)} />
+					<button type="submit">Submit</button>
+					<div>
+						<button type="button" onClick={giveUp}>
+							Give Up
+						</button>
+					</div>
+				</form>
+			</>
+		))
+		.with("correct", () => (
 			<div>
 				<h1>Correct!</h1>
-				<button onClick={randomize}>Play Again</button>
+				<button type="button" onClick={randomize}>
+					Play Again
+				</button>
 			</div>
-		);
-	}
-	if (loadState === "give_up") {
-		return (
+		))
+		.with("give_up", () => (
 			<div>
 				<h1>You gave up.</h1>
-				<p>Answer: {track!.name}</p>
-				<button onClick={randomize}>Play Again</button>
+				<p>Answer: {track?.name}</p>
+				<button type="button" onClick={randomize}>
+					Play Again
+				</button>
 			</div>
-		);
-	}
+		))
+		.exhaustive();
 	return (
-		<div>
-            {analyzerState && <AudioVisualizer analyzer={analyzerState} />}
-			<h1>Guess the currently playing song</h1>
-			<form onSubmit={submit}>
-				<input value={guess} onChange={x => setGuess(x.target.value)} />
-				<button type="submit">Submit</button>
-				<div>
-					<button onClick={giveUp}>Give Up</button>
-				</div>
-			</form>
+		<div className={styles.content}>
+			{analyzerState && <AudioVisualizer analyzer={analyzerState} />}
+			{body}
+			<VolumeSlider volume={volume} setVolume={setVolume} />
 		</div>
 	);
 }

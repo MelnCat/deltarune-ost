@@ -1,0 +1,12 @@
+.slider {
+    position: fixed;
+    bottom: 0.25em;
+    right: 0.25em;
+	display: flex;
+	align-items: center;
+	gap: 0.25em;
+    input {
+		writing-mode: vertical-rl;
+        direction: rtl;
+	}
+}
