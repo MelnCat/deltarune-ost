@@ -8,6 +8,7 @@ export class Track {
 	album: string[];
 	paths: string[];
 	chapters: number[];
+	whenPlay: (input: string, normalized: string) => boolean;
 
 	constructor(args: TrackArgs) {
 		this.name = args.name;
@@ -25,6 +26,7 @@ export class Track {
 			return (found as { default: string }).default;
 		});
 		this.chapters = args.chapters ?? [];
+		this.whenPlay = args.whenPlay ?? (() => true);
 	}
 }
 
@@ -33,12 +35,17 @@ interface TrackArgs {
 	filename: string;
 	album: string | string[];
 	chapters?: number[];
+	whenPlay?(input: string, normalized: string): boolean;
 }
 
 export const tracks: Track[] = [];
 
+export const tracksByName: Record<string, Track> = {};
+
 const register = (args: TrackArgs) => {
-	tracks.push(new Track(args));
+	const track = new Track(args);
+	tracks.push(track);
+	tracksByName[args.name] = track;
 };
 
 register({ name: "A Town Called Hometown", filename: "town", album: "DELTARUNE Chapter 1 OST", chapters: [1, 2] });
