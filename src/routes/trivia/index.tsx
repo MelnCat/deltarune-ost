@@ -88,7 +88,6 @@ function RouteComponent() {
 		if (!guess.trim()) return;
 		if (normalizeText(track.name) === normalizeText(guess)) {
 			setLoadState("correct");
-			stop();
 		} else {
 			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
@@ -99,19 +98,30 @@ function RouteComponent() {
 	};
 	const giveUp = () => {
 		setLoadState("give_up");
-		stop();
 	};
 	const body = match(loadState)
 		.with("none", () => null)
 		.with("loading", () => <h1>Loading</h1>)
-		.with("done", () => (
+		.with("done", "correct", "give_up", () => (
 			<>
-				<h1>Guess the currently playing song</h1>
+					{match(loadState)
+						.with("done", () => <h1>Guess the currently playing song.</h1>)
+						.with("correct", () => <h1 className={styles.correct}>Correct!</h1>)
+						.with("give_up", () => <h1 className={styles.failed}>You failed.</h1>)
+						.otherwise(() => "")}
 				<form onSubmit={submit}>
-					<input autoFocus placeholder="Song Name" value={guess} onChange={e => setGuess(e.target.value)} />
-					<button type="submit">Submit</button>
+					<input
+						autoFocus
+						placeholder="Song Name"
+						value={guess}
+						onChange={e => setGuess(e.target.value)}
+						disabled={loadState !== "done"}
+					/>
+					<button type="submit" disabled={loadState !== "done"}>
+						Submit
+					</button>
 					<div>
-						<button type="button" onClick={giveUp}>
+						<button type="button" onClick={giveUp} disabled={loadState !== "done"}>
 							Give Up
 						</button>
 					</div>
@@ -129,31 +139,27 @@ function RouteComponent() {
 							</div>
 						))}
 					</div>
+					{loadState !== "done" && (
+						<>
+							<p>Answer: {track?.name}</p>
+							<button type="button" onClick={randomize} autoFocus>
+								Play Again
+							</button>
+						</>
+					)}
 				</form>
 			</>
-		))
-		.with("correct", () => (
-			<div>
-				<h1>Correct!</h1>
-				<p>Answer: {track?.name}</p>
-				<button type="button" onClick={randomize} autoFocus>
-					Play Again
-				</button>
-			</div>
-		))
-		.with("give_up", () => (
-			<div>
-				<h1>You failed.</h1>
-				<p>Answer: {track?.name}</p>
-				<button type="button" onClick={randomize} autoFocus>
-					Play Again
-				</button>
-			</div>
 		))
 		.exhaustive();
 	return (
 		<div className={styles.content}>
-			{analyzerState && <AudioVisualizer analyzer={analyzerState} />}
+			{analyzerState && <AudioVisualizer analyzer={analyzerState} color={match(loadState)
+
+                .with("correct", () => "#00ff00")
+                .with("done", () => "#ffffff")
+                .with("give_up", () => "#ff0000")
+                .otherwise(() => "#888888")
+            } />}
 			{body}
 			<VolumeSlider volume={volume} setVolume={setVolume} />
 		</div>

@@ -38,8 +38,14 @@
 	}
 }
 .wrong {
-    color: red;
+    color: #ff0000;
     display: flex;
     flex-direction: column;
     gap: 0.5em;
+}
+.correct {
+    color: #00ff00;
+}
+.wrong {
+    color: #ff0000;
 }

@@ -12,11 +12,11 @@ body,
 	min-height: 100%;
 	font-family: "Determination Sans", sans-serif;
 	color: #ffffff;
-    font-size: 24px;
+	font-size: 24px;
 }
 
 body {
-    height: 100dvh;
+	height: 100dvh;
 }
 
 .audioClickPrompt {
@@ -52,24 +52,32 @@ button {
 }
 
 h1 {
-    margin: 0;
+	margin: 0;
 }
 
 button {
-    border: #ffffff solid 0.16em;
-    background-color: transparent;
-    color: #ffffff;
-    padding: 0.2em 0.4em;
-    font-size: 1em;
-    &:hover {
-        color: #ffff00;
-    }
+	border: #ffffff solid 0.16em;
+	background-color: transparent;
+	color: #ffffff;
+	padding: 0.2em 0.4em;
+	font-size: 1em;
+	&:hover {
+		color: #ffff00;
+	}
+	&:disabled {
+		border: #888888 solid 0.16em;
+		color: #888888;
+	}
 }
 input {
-    border: #ffffff solid 0.16em;
-    background-color: transparent;
-    color: #ffffff;
-    padding: 0.2em 0.4em;
-    font-size: 1em;
-    font-family: inherit;
+	border: #ffffff solid 0.16em;
+	background-color: transparent;
+	color: #ffffff;
+	padding: 0.2em 0.4em;
+	font-size: 1em;
+	font-family: inherit;
+	&:disabled {
+		border: #888888 solid 0.16em;
+		color: #888888;
+	}
 }

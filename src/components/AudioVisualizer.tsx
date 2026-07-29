@@ -5,7 +5,7 @@ import styles from "./AudioVisualizer.module.css";
 const NUM_BARS = 40;
 const GAP = 5;
 
-export const AudioVisualizer = ({ analyzer }: { analyzer: AnalyserNode }) => {
+export const AudioVisualizer = ({ analyzer, color }: { analyzer: AnalyserNode; color: string }) => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
 	const resizeCanvas = () => {
@@ -36,7 +36,7 @@ export const AudioVisualizer = ({ analyzer }: { analyzer: AnalyserNode }) => {
 				const range = data.slice(i * barRange, (i + 1) * barRange);
 				const x = range.reduce((l, c) => l + c, 0) / range.length;
 				const brightness = Math.round((x / 255) ** 2 * 255);
-				ctx.fillStyle = `#ffffff${brightness.toString(16).padStart(2, "0")}`;
+				ctx.fillStyle = `${color}${brightness.toString(16).padStart(2, "0")}`;
 				const height = x * 3;
 
 				ctx.fillRect(barWidth * i + GAP, canvas.height - height, barWidth - GAP * 2, height);
@@ -45,6 +45,6 @@ export const AudioVisualizer = ({ analyzer }: { analyzer: AnalyserNode }) => {
 		};
 		render();
 		return () => cancelAnimationFrame(frame);
-	}, [analyzer]);
+	}, [analyzer, color]);
 	return <canvas ref={canvasRef} className={styles.canvas} />;
 };
