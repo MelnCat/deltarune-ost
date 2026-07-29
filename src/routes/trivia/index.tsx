@@ -23,6 +23,8 @@ function RouteComponent() {
 	type LoadState = "none" | "loading" | "done" | "correct" | "give_up";
 	const [loadState, setLoadState] = useState<LoadState>("none");
 	const [guess, setGuess] = useState("");
+	const [wrong, setWrong] = useState(0);
+
 	const playTrack = async (track: Track) => {
 		setLoadState("loading");
 		console.log("Created");
@@ -56,6 +58,8 @@ function RouteComponent() {
 		if (audioCtx.current) {
 			audioCtx.current.close();
 			audioCtx.current = null;
+			analyzer.current = null;
+			setAnalyzerState(null);
 		}
 	};
 	const randomize = () => {
@@ -63,6 +67,7 @@ function RouteComponent() {
 		const rand = tracks[Math.floor(Math.random() * tracks.length)];
 		setTrack(rand);
 		setGuess("");
+		setWrong(0);
 		playTrack(rand);
 	};
 	useEffect(() => {
@@ -80,9 +85,16 @@ function RouteComponent() {
 	const submit: React.SubmitEventHandler<HTMLFormElement> = e => {
 		e.preventDefault();
 		if (!track) return;
+		if (!guess.trim()) return;
 		if (normalizeText(track.name) === normalizeText(guess)) {
 			setLoadState("correct");
 			stop();
+		} else {
+			setWrong(x => x + 1);
+			setGuess("");
+			if (wrong + 1 >= 3) {
+				setLoadState("give_up");
+			}
 		}
 	};
 	const giveUp = () => {
@@ -96,12 +108,19 @@ function RouteComponent() {
 			<>
 				<h1>Guess the currently playing song</h1>
 				<form onSubmit={submit}>
-					<input value={guess} onChange={e => setGuess(e.target.value)} />
+					<input autoFocus placeholder="Song Name" value={guess} onChange={e => setGuess(e.target.value)} />
 					<button type="submit">Submit</button>
 					<div>
 						<button type="button" onClick={giveUp}>
 							Give Up
 						</button>
+					</div>
+					<div className={styles.xContainer}>
+						{[...Array(3)].map((_, i) => (
+							<div className={styles.x} data-active={i < wrong || null} key={i}>
+								{i < wrong ? "X" : ""}
+							</div>
+						))}
 					</div>
 				</form>
 			</>
@@ -109,16 +128,17 @@ function RouteComponent() {
 		.with("correct", () => (
 			<div>
 				<h1>Correct!</h1>
-				<button type="button" onClick={randomize}>
+				<p>Answer: {track?.name}</p>
+				<button type="button" onClick={randomize} autoFocus>
 					Play Again
 				</button>
 			</div>
 		))
 		.with("give_up", () => (
 			<div>
-				<h1>You gave up.</h1>
+				<h1>You failed.</h1>
 				<p>Answer: {track?.name}</p>
-				<button type="button" onClick={randomize}>
+				<button type="button" onClick={randomize} autoFocus>
 					Play Again
 				</button>
 			</div>

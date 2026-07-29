@@ -45,6 +45,6 @@ export const AudioVisualizer = ({ analyzer }: { analyzer: AnalyserNode }) => {
 		};
 		render();
 		return () => cancelAnimationFrame(frame);
-	}, []);
+	}, [analyzer]);
 	return <canvas ref={canvasRef} className={styles.canvas} />;
 };
