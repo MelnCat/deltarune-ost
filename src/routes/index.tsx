@@ -18,8 +18,7 @@ function App() {
                     <div className={`${styles.logoOverlay} ${styles.logoImageOverlay}`}></div>
                 </div>
                 <h1>Soundtrack Trivia</h1>
-                <MainLink to="Trivia">Trivia</MainLink>
-                <MainLink to="Trivia">Trivia</MainLink>
+                <MainLink to="trivia">Trivia</MainLink>
             </div>
 		</main>
 	);

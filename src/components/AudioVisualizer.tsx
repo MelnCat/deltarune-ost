@@ -63,15 +63,15 @@ export const AudioVisualizer = ({ analyzer, color }: { analyzer: AnalyserNode; c
 			// ctx.drawImage(canvas, 0, 10, canvas.width, canvas.height - 10, 0, 0, canvas.width, canvas.height - 10);
 			// ctx.fillStyle = "#000000";
 			// ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
-			ctx.fillStyle = "#000000aa";
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
-			ctx.fillStyle = "#222222";
+			ctx.reset();
 
 			const min = 1;
 			const max = binCount - 1;
+			const barCount = 80;
+			const barSize = canvas.width / barCount;
 
-			for (let i = 0; i < canvas.height; i++) {
-				const t = (i / canvas.height) * 0.9 + 0.1;
+			for (let i = 0; i < barCount; i++) {
+				const t = (i / barCount) * 0.9 + 0.1;
 				const binPos = min * Math.pow(max / min, t);
 
 				const low = Math.floor(binPos);
@@ -88,7 +88,7 @@ export const AudioVisualizer = ({ analyzer, color }: { analyzer: AnalyserNode; c
 				const brightness = Math.max(0, Math.min(MAX_BRIGHTNESS, Math.round(MAX_BRIGHTNESS * (v / MAX_BRIGHTNESS) ** 3)));
 				ctx.fillStyle = `${color}${brightness.toString(16).padStart(2, "0")}`;
 				//ctx.fillRect(i, 0, 1, canvas.height);
-				ctx.fillRect(0, canvas.height - 1 - i, canvas.width, 1);
+				ctx.fillRect(barSize * i, 0, barSize, canvas.height);
 			}
 			frame = requestAnimationFrame(render);
 		};

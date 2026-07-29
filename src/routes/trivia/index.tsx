@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import styles from "./index.module.css";
 import { match } from "ts-pattern";
+import { Background } from "#/components/Background";
 
 export const Route = createFileRoute("/trivia/")({
 	component: RouteComponent,
@@ -164,11 +165,12 @@ function RouteComponent() {
 					analyzer={analyzerState}
 					color={match(loadState)
 						.with("correct", () => "#00ff00")
-						.with("done", () => "#ffffff")
+						.with("done", () => "#ff00ff")
 						.with("give_up", () => "#ff0000")
 						.otherwise(() => "#888888")}
 				/>
 			)}
+            <Background />
 			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
 		</div>

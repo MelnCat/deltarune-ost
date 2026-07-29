@@ -21,6 +21,5 @@
 	img {
 		height: 100%;
 		display: flex;
-		image-rendering: pixelated;
 	}
 }
