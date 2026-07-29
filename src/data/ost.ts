@@ -130,7 +130,19 @@ register({ name: "Lost Girl", filename: "noelle_normal", album: "DELTARUNE Chapt
 register({ name: "Mini Studio", filename: "cyberhouse", album: "DELTARUNE Chapter 2 OST" });
 register({ name: "My Castle Town", filename: "castletown", album: "DELTARUNE Chapter 2 OST" });
 register({ name: "NOW'S YOUR CHANCE TO BE A", filename: "spamton_battle", album: "DELTARUNE Chapter 2 OST" });
-register({ name: "Ohhhhohohoho!", filename: "queen_intro", album: "DELTARUNE Chapter 2 OST" });
+register({
+	name: "Ohhhhohohoho!",
+	filename: "queen_intro",
+	album: "DELTARUNE Chapter 2 OST",
+	matches(input, normalized) {
+		return (
+			normalized.length > 5 &&
+			normalized.match(/^[oh]+$/) !== null &&
+			normalized.split("").filter(x => x === "o").length > 3 &&
+			normalized.split("").filter(x => x === "h").length > 3
+		);
+	},
+});
 register({ name: "Pandora Palace", filename: "mansion", album: "DELTARUNE Chapter 2 OST" });
 register({ name: "Powers Combined", filename: "gigaqueen_pre", album: "DELTARUNE Chapter 2 OST" });
 register({ name: "Queen", filename: "queen", album: "DELTARUNE Chapter 2 OST" });

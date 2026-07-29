@@ -1,4 +1,5 @@
 import { AudioVisualizer } from "#/components/AudioVisualizer";
+import { Button } from "#/components/Button";
 import { VolumeSlider } from "#/components/VolumeSlider";
 import { Track, tracks } from "#/data/ost";
 import { normalizeText } from "#/util/text";
@@ -24,6 +25,7 @@ function RouteComponent() {
 	const [loadState, setLoadState] = useState<LoadState>("none");
 	const [guess, setGuess] = useState("");
 	const [wrong, setWrong] = useState<string[]>([]);
+	const inputRef = useRef<HTMLInputElement | null>(null);
 
 	const playTrack = async (track: Track) => {
 		setLoadState("loading");
@@ -31,7 +33,7 @@ function RouteComponent() {
 		const ctx = (audioCtx.current ??= new AudioContext());
 		analyzer.current = ctx.createAnalyser();
 		setAnalyzerState(analyzer.current);
-		analyzer.current.fftSize = 4096;
+		analyzer.current.fftSize = 2048;
 		const buffers = await Promise.all(track.paths.map(x => fetch(x).then(x => x.arrayBuffer().then(x => ctx.decodeAudioData(x)))));
 		if (audioCtx.current !== ctx) {
 			if (ctx.state !== "closed") ctx.close();
@@ -86,7 +88,7 @@ function RouteComponent() {
 		e.preventDefault();
 		if (!track) return;
 		if (!guess.trim()) return;
-		if (normalizeText(track.name) === normalizeText(guess)) {
+		if (track.matches(guess, normalizeText(guess))) {
 			setLoadState("correct");
 		} else {
 			setWrong(x => x.concat(guess.trim()));
@@ -94,6 +96,7 @@ function RouteComponent() {
 			if (wrong.length + 1 >= 3) {
 				setLoadState("give_up");
 			}
+			inputRef.current?.focus();
 		}
 	};
 	const giveUp = () => {
@@ -104,26 +107,29 @@ function RouteComponent() {
 		.with("loading", () => <h1>Loading</h1>)
 		.with("done", "correct", "give_up", () => (
 			<>
-					{match(loadState)
-						.with("done", () => <h1>Guess the currently playing song.</h1>)
-						.with("correct", () => <h1 className={styles.correct}>Correct!</h1>)
-						.with("give_up", () => <h1 className={styles.failed}>You failed.</h1>)
-						.otherwise(() => "")}
-				<form onSubmit={submit}>
-					<input
-						autoFocus
-						placeholder="Song Name"
-						value={guess}
-						onChange={e => setGuess(e.target.value)}
-						disabled={loadState !== "done"}
-					/>
-					<button type="submit" disabled={loadState !== "done"}>
-						Submit
-					</button>
+				{match(loadState)
+					.with("done", () => <h1>Guess the currently playing song.</h1>)
+					.with("correct", () => <h1 className={styles.correct}>Correct!</h1>)
+					.with("give_up", () => <h1 className={styles.failed}>You failed.</h1>)
+					.otherwise(() => "")}
+				<form className={styles.form} onSubmit={submit}>
+					<div className={styles.inputRow}>
+						<input
+							ref={inputRef}
+							autoFocus
+							placeholder="Song Name"
+							value={guess}
+							onChange={e => setGuess(e.target.value)}
+							disabled={loadState !== "done"}
+						/>
+						<Button type="submit" disabled={loadState !== "done"}>
+							Submit
+						</Button>
+					</div>
 					<div>
-						<button type="button" onClick={giveUp} disabled={loadState !== "done"}>
+						<Button type="button" onClick={giveUp} disabled={loadState !== "done"}>
 							Give Up
-						</button>
+						</Button>
 					</div>
 					<div className={styles.xContainer}>
 						{[...Array(3)].map((_, i) => (
@@ -142,9 +148,9 @@ function RouteComponent() {
 					{loadState !== "done" && (
 						<>
 							<p>Answer: {track?.name}</p>
-							<button type="button" onClick={randomize} autoFocus>
+							<Button type="button" onClick={randomize} autoFocus>
 								Play Again
-							</button>
+							</Button>
 						</>
 					)}
 				</form>
@@ -153,14 +159,17 @@ function RouteComponent() {
 		.exhaustive();
 	return (
 		<div className={styles.content}>
-			{analyzerState && <AudioVisualizer analyzer={analyzerState} color={match(loadState)
-
-                .with("correct", () => "#00ff00")
-                .with("done", () => "#ffffff")
-                .with("give_up", () => "#ff0000")
-                .otherwise(() => "#888888")
-            } />}
-			{body}
+			{analyzerState && (
+				<AudioVisualizer
+					analyzer={analyzerState}
+					color={match(loadState)
+						.with("correct", () => "#00ff00")
+						.with("done", () => "#ffffff")
+						.with("give_up", () => "#ff0000")
+						.otherwise(() => "#888888")}
+				/>
+			)}
+			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
 		</div>
 	);

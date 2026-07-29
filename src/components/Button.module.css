@@ -1,0 +1,20 @@
+.button {
+    display: flex;
+    gap: 0.2em;
+    font-family: inherit;
+	border: #ffffff solid 0.16em;
+	background-color: transparent;
+	color: #ffffff;
+	padding: 0.2em 0.4em;
+	font-size: 1em;
+	&:hover {
+		color: #ffff00;
+	}
+	&:disabled {
+		border: #888888 solid 0.16em;
+		color: #888888;
+	}
+}
+.soulContainer {
+    width: 1em;
+}

@@ -3,6 +3,7 @@ import styles from "./index.module.css";
 import deltaruneHeart from "@/assets/img/deltarune_heart.svg";
 import { useBgm } from "#/util/bgm";
 import ch3_board3 from "../assets/music/ch3_board3.ogg";
+import { MainLink } from "#/components/MainLink";
 
 export const Route = createFileRoute("/")({ component: App });
 
@@ -17,7 +18,8 @@ function App() {
                     <div className={`${styles.logoOverlay} ${styles.logoImageOverlay}`}></div>
                 </div>
                 <h1>Soundtrack Trivia</h1>
-                <Link to="/trivia">Trivia</Link>
+                <MainLink to="Trivia">Trivia</MainLink>
+                <MainLink to="Trivia">Trivia</MainLink>
             </div>
 		</main>
 	);

@@ -14,17 +14,17 @@
 	flex-direction: column;
 	gap: 1em;
 	align-items: center;
-    padding-top: 4em;
 }
 .xContainer {
 	display: flex;
 	gap: 1em;
 	margin: 1em 0;
+	justify-content: center;
 }
 .x {
 	display: flex;
-	color: #444444;
-	font-size: 5em;
+	color: #44444488;
+	font-size: 3em;
 	border: 0.1em solid currentColor;
 	text-align: center;
 	align-items: center;
@@ -38,14 +38,38 @@
 	}
 }
 .wrong {
-    color: #ff0000;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
+	color: #ff0000;
+	display: flex;
+	flex-direction: column;
 }
 .correct {
-    color: #00ff00;
+	color: #00ff00;
 }
 .wrong {
-    color: #ff0000;
+	color: #ff0000;
+}
+.form {
+	width: 18em;
+	display: flex;
+	flex-direction: column;
+    gap: 0.25em;
+    align-items: center;
+}
+.inputRow {
+    display: flex;
+    gap: 0.25em;
+    input {
+        width: 14em;
+    }
+}
+.container {
+    margin: 0 auto;
+	margin-top: 4em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1em 2em;
+    input, button {
+        background-color: #00000044;
+    }
 }
