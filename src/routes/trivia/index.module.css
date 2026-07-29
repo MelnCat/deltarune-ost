@@ -14,7 +14,7 @@
 	flex-direction: column;
 	gap: 1em;
 	align-items: center;
-	justify-content: center;
+    padding-top: 4em;
 }
 .xContainer {
 	display: flex;
@@ -36,4 +36,10 @@
 	&[data-active] {
 		color: #ff0000;
 	}
+}
+.wrong {
+    color: red;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
 }

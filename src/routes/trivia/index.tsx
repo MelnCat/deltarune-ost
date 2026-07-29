@@ -23,7 +23,7 @@ function RouteComponent() {
 	type LoadState = "none" | "loading" | "done" | "correct" | "give_up";
 	const [loadState, setLoadState] = useState<LoadState>("none");
 	const [guess, setGuess] = useState("");
-	const [wrong, setWrong] = useState(0);
+	const [wrong, setWrong] = useState<string[]>([]);
 
 	const playTrack = async (track: Track) => {
 		setLoadState("loading");
@@ -67,7 +67,7 @@ function RouteComponent() {
 		const rand = tracks[Math.floor(Math.random() * tracks.length)];
 		setTrack(rand);
 		setGuess("");
-		setWrong(0);
+		setWrong([]);
 		playTrack(rand);
 	};
 	useEffect(() => {
@@ -90,9 +90,9 @@ function RouteComponent() {
 			setLoadState("correct");
 			stop();
 		} else {
-			setWrong(x => x + 1);
+			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
-			if (wrong + 1 >= 3) {
+			if (wrong.length + 1 >= 3) {
 				setLoadState("give_up");
 			}
 		}
@@ -117,8 +117,15 @@ function RouteComponent() {
 					</div>
 					<div className={styles.xContainer}>
 						{[...Array(3)].map((_, i) => (
-							<div className={styles.x} data-active={i < wrong || null} key={i}>
-								{i < wrong ? "X" : ""}
+							<div className={styles.x} data-active={i < wrong.length || null} key={i}>
+								{i < wrong.length ? "X" : ""}
+							</div>
+						))}
+					</div>
+					<div className={styles.wrong}>
+						{wrong.map((x, i) => (
+							<div className={styles.wrongText} key={i}>
+								"{x}" is incorrect.
 							</div>
 						))}
 					</div>
