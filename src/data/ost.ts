@@ -1,17 +1,22 @@
+import { equalsNormalized, normalizeText } from "#/util/text";
+
 const songs = import.meta.glob("./*", { base: "../assets/music", eager: true });
 const sounds = import.meta.glob("./*", { base: "../assets/audiogroup_default", eager: true });
 const extras = import.meta.glob("./*", { base: "../assets/extra", eager: true });
 
 export class Track {
-	name: string;
-	filename: string;
-	album: string[];
-	paths: string[];
-	chapters: number[];
+	readonly name: string;
+	readonly normalizedName: string;
+	readonly filename: string;
+	readonly album: string[];
+	readonly paths: string[];
+	readonly chapters: number[];
 	whenPlay: (input: string, normalized: string) => boolean;
+	matches: (input: string, normalized: string) => boolean;
 
 	constructor(args: TrackArgs) {
 		this.name = args.name;
+		this.normalizedName = normalizeText(args.name);
 		this.filename = args.filename;
 		this.album = typeof args.album === "string" ? [args.album] : args.album;
 		this.paths = this.filename.split(", ").map(x => {
@@ -27,6 +32,7 @@ export class Track {
 		});
 		this.chapters = args.chapters ?? [];
 		this.whenPlay = args.whenPlay ?? (() => true);
+		this.matches = args.matches ?? ((input, normalized) => equalsNormalized(normalized, this.normalizedName));
 	}
 }
 
@@ -35,7 +41,8 @@ interface TrackArgs {
 	filename: string;
 	album: string | string[];
 	chapters?: number[];
-	whenPlay?(input: string, normalized: string): boolean;
+	whenPlay?(this: Track, input: string, normalized: string): boolean;
+	matches?(this: Track, input: string, normalized: string): boolean;
 }
 
 export const tracks: Track[] = [];
@@ -207,7 +214,14 @@ register({ name: "SOUTH OF THE BORDER!!", filename: "ch3_south_of_the_border", a
 register({ name: "SPAWN", filename: "titan_spawn", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "SWORD", filename: "board_sword_music", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "The distance between two", filename: "noelle_distant", album: "DELTARUNE Chapters 3+4 OST" });
-register({ name: "The LEGEND...?", filename: "legend_altered", album: "DELTARUNE Chapters 3+4 OST" });
+register({
+	name: "The LEGEND...?",
+	filename: "legend_altered",
+	album: "DELTARUNE Chapters 3+4 OST",
+	matches(input, normalized) {
+		return equalsNormalized(normalized, this.normalizedName) && input.includes("?");
+	},
+});
 register({ name: "The Ol' Jitterbug", filename: "jitterbug", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "The place where it rained", filename: "rain", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "The Second Sanctuary", filename: "second_church", album: "DELTARUNE Chapters 3+4 OST" });
@@ -226,7 +240,14 @@ register({ name: "Chapter 5 Logo", filename: "deltarune_logo_ch5_itoki", album: 
 register({ name: "Cutie Mew Mew Magic", filename: "pink", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Dreamwatchers", filename: "flowery_iog_extended", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Festival", filename: "festival", album: "DELTARUNE Chapter 5 OST" });
-register({ name: "Field of Hopes and Dreams (Credits Version)", filename: "ch5_credits", album: "DELTARUNE Chapter 5 OST" });
+register({
+	name: "Field of Hopes and Dreams (Credits Version)",
+	filename: "ch5_credits",
+	album: "DELTARUNE Chapter 5 OST",
+	matches(input, normalized) {
+		return equalsNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("credits");
+	},
+});
 register({ name: "Flower Castle", filename: "flower_castle", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Flower Foyer", filename: "castle_foyer", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Flower King", filename: "asgore_serious", album: "DELTARUNE Chapter 5 OST" });
