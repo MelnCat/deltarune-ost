@@ -3,94 +3,59 @@ import { Button } from "#/components/Button";
 import { VolumeSlider } from "#/components/VolumeSlider";
 import { Track, tracks } from "#/data/ost";
 import { normalizeText } from "#/util/text";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import styles from "./index.module.css";
 import { match } from "ts-pattern";
 import { Background } from "#/components/Background";
+import { useAudio } from "#/util/audio";
+import NumberFlow from "@number-flow/react";
 
 export const Route = createFileRoute("/trivia/")({
 	component: RouteComponent,
 });
 
-function RouteComponent() {
-	const audioCtx = useRef<AudioContext | null>(null);
-	const analyzer = useRef<AnalyserNode | null>(null);
-	const gain = useRef<GainNode | null>(null);
-	const [volume, setVolume] = useLocalStorage("volume", 100);
+type LoadState = "none" | "loading" | "done" | "correct" | "give_up" | "results";
 
-	const [analyzerState, setAnalyzerState] = useState<AnalyserNode | null>(null);
+function RouteComponent() {
+	const [volume, setVolume] = useLocalStorage("volume", 100);
 	const [track, setTrack] = useState<Track | null>(null);
-	type LoadState = "none" | "loading" | "done" | "correct" | "give_up";
 	const [loadState, setLoadState] = useState<LoadState>("none");
 	const [guess, setGuess] = useState("");
 	const [wrong, setWrong] = useState<string[]>([]);
+	const [streak, setStreak] = useState(0);
 	const inputRef = useRef<HTMLInputElement | null>(null);
 
-	const playTrack = async (track: Track) => {
-		setLoadState("loading");
-		console.log("Created");
-		const ctx = (audioCtx.current ??= new AudioContext());
-		analyzer.current = ctx.createAnalyser();
-		setAnalyzerState(analyzer.current);
-		analyzer.current.fftSize = 2048;
-		const buffers = await Promise.all(track.paths.map(x => fetch(x).then(x => x.arrayBuffer().then(x => ctx.decodeAudioData(x)))));
-		if (audioCtx.current !== ctx) {
-			if (ctx.state !== "closed") ctx.close();
-			return;
-		}
-		let currentTime = 0;
-		for (const buffer of buffers) {
-			const source = audioCtx.current.createBufferSource();
-			source.buffer = buffer;
-			source.connect(analyzer.current);
-			source.start(currentTime);
-			if (buffer === buffers.at(-1)) {
-				source.loop = true;
-			}
-			currentTime += buffer.duration;
-		}
-		gain.current = ctx.createGain();
-		gain.current.gain.value = volume / 100;
-		analyzer.current.connect(gain.current);
-		gain.current.connect(audioCtx.current.destination);
-		setLoadState("done");
-	};
-	const stop = () => {
-		if (audioCtx.current) {
-			audioCtx.current.close();
-			audioCtx.current = null;
-			analyzer.current = null;
-			setAnalyzerState(null);
-		}
-	};
+	const { analyzer } = useAudio({
+		volume,
+		track,
+		setLoading: loading => {
+			setLoadState(prev => {
+				if (prev === "correct" || prev === "give_up") return prev;
+				return loading ? "loading" : "done";
+			});
+		},
+	});
+
 	const randomize = () => {
-		stop();
 		const rand = tracks[Math.floor(Math.random() * tracks.length)];
+		setLoadState("loading");
 		setTrack(rand);
 		setGuess("");
 		setWrong([]);
-		playTrack(rand);
 	};
 	useEffect(() => {
 		randomize();
 	}, []);
-	useEffect(() => {
-		return () => {
-			stop();
-		};
-	}, []);
-	useEffect(() => {
-		if (!gain.current) return;
-		gain.current.gain.value = volume / 100;
-	}, [volume]);
+
 	const submit: React.SubmitEventHandler<HTMLFormElement> = e => {
 		e.preventDefault();
 		if (!track) return;
 		if (!guess.trim()) return;
 		if (track.matches(guess, normalizeText(guess))) {
 			setLoadState("correct");
+			setStreak(streak + 1);
 		} else {
 			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
@@ -103,15 +68,26 @@ function RouteComponent() {
 	const giveUp = () => {
 		setLoadState("give_up");
 	};
+	const goToResults = () => {
+		setLoadState("results");
+	};
 	const body = match(loadState)
 		.with("none", () => null)
 		.with("loading", () => <h1>Loading</h1>)
+		.with("results", () => (
+			<div className={styles.results}>
+				<h1>Results</h1>
+                <p>Final Streak: {streak}</p>
+                <p>Lost to: {track!.name}</p>
+                <Link to="/"><Button>Back to Title</Button></Link>
+			</div>
+		))
 		.with("done", "correct", "give_up", () => (
 			<>
 				{match(loadState)
 					.with("done", () => <h1>Guess the currently playing song.</h1>)
 					.with("correct", () => <h1 className={styles.correct}>Correct!</h1>)
-					.with("give_up", () => <h1 className={styles.failed}>You failed.</h1>)
+					.with("give_up", () => <h1 className={styles.failed}>Streak ended.</h1>)
 					.otherwise(() => "")}
 				<form className={styles.form} onSubmit={submit}>
 					<div className={styles.inputRow}>
@@ -149,9 +125,15 @@ function RouteComponent() {
 					{loadState !== "done" && (
 						<>
 							<p>Answer: {track?.name}</p>
-							<Button type="button" onClick={randomize} autoFocus>
-								Play Again
-							</Button>
+							{loadState === "give_up" ? (
+								<Button type="button" onClick={goToResults} autoFocus>
+									Go to Results
+								</Button>
+							) : loadState === "correct" ? (
+								<Button type="button" onClick={randomize} autoFocus>
+									Next
+								</Button>
+							) : null}
 						</>
 					)}
 				</form>
@@ -160,9 +142,15 @@ function RouteComponent() {
 		.exhaustive();
 	return (
 		<div className={styles.content}>
-			{analyzerState && (
+			<header className={styles.header}>
+				<h1>Streak</h1>
+				<p>
+					Current Streak: <NumberFlow value={streak} />
+				</p>
+			</header>
+			{analyzer && (
 				<AudioVisualizer
-					analyzer={analyzerState}
+					analyzer={analyzer}
 					color={match(loadState)
 						.with("correct", () => "#00ff00")
 						.with("done", () => "#ff00ff")
@@ -170,7 +158,7 @@ function RouteComponent() {
 						.otherwise(() => "#888888")}
 				/>
 			)}
-            <Background />
+			<Background />
 			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
 		</div>

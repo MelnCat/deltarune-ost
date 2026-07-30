@@ -13,6 +13,7 @@
 	flex-direction: column;
 	gap: 1em;
 	align-items: center;
+	text-align: center;
 }
 .xContainer {
 	display: flex;
@@ -51,24 +52,77 @@
 	width: 18em;
 	display: flex;
 	flex-direction: column;
-    gap: 0.25em;
-    align-items: center;
+	gap: 0.25em;
+	align-items: center;
 }
 .inputRow {
-    display: flex;
-    gap: 0.25em;
-    input {
-        width: 14em;
-    }
+	display: flex;
+	gap: 0.25em;
+	input {
+		width: 14em;
+	}
 }
 .container {
-    margin: 0 auto;
-	margin-top: 4em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1em 2em;
-    input, button {
-        background-color: #00000044;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	input,
+	button {
+		background-color: #00000044;
+	}
+}
+.header {
+	border: 0.2em solid #ffffff;
+	background-color: #000000;
+	border-top: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0 1em;
+	h1,
+	p {
+		margin: 0;
+	}
+	p {
+		color: #ffff00;
+		.number {
+			margin-bottom: 2em;
+		}
+	}
+}
+.results {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2em;
+	align-items: center;
+}
+
+@media screen and (max-width: 624px) {
+	.inputRow {
+		input {
+			width: 10em;
+		}
+	}
+    h1 {
+        font-size: 1.5em;
     }
+	.container {
+		width: 12em;
+	}
+}
+
+@media screen and (max-width: 460px) {
+	.inputRow {
+		input {
+			width: 10em;
+		}
+	}
+    h1 {
+        font-size: 1.5em;
+    }
+	.container {
+		width: 12em;
+        font-size: 0.75em;
+	}
 }

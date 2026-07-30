@@ -15,7 +15,7 @@ function App() {
     const description = match(hovered)
         .with("trivia", () => "Keep going until you fail to guess a song in 3 tries. Try to get a high score!")
         .with("gauntlet", () => "Go through every single OST track in a random order, and see how many of them you remember!")
-        .otherwise(() => "")
+        .otherwise(() => "Made by melncat.")
 
 	useBgm(ch3_board3, 0.5);
 	return (
