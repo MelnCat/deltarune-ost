@@ -39,7 +39,8 @@ function RouteComponent() {
 	});
 
 	const randomize = () => {
-		const rand = tracks[Math.floor(Math.random() * tracks.length)];
+		const choices = track === null ? tracks : tracks.filter(x => x !== track);
+		const rand = choices[Math.floor(Math.random() * choices.length)];
 		setLoadState("loading");
 		setTrack(rand);
 		setGuess("");
