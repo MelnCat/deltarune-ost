@@ -3,7 +3,10 @@ import { LRUCache } from "lru-cache";
 
 const cacheContext = new AudioContext();
 const audioCache = new LRUCache<string, AudioBuffer>({
-	max: 10,
+	max: 20,
+	ignoreFetchAbort: true,
+	allowStaleOnFetchRejection: true,
+	noDeleteOnFetchRejection: true,
 	async fetchMethod(k) {
 		return cacheContext.decodeAudioData(await (await fetch(k)).arrayBuffer());
 	},
