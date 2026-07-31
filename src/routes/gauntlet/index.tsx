@@ -59,7 +59,7 @@ function RouteComponent() {
 	const shareData = useMemo(() => {
 		if (!results || !queue) return "";
 		return `\
-I managed to guess ${results.filter(x => x.correct).length}/${queue.length} of all DELTARUNE songs correctly!
+I managed to guess ${results.filter(x => x.correct).length}/${queue.length} (${(results.filter(x => x.correct).length/queue.length * 100).toFixed(2)}%) of all DELTARUNE songs correctly!
 My most forgotten chapter OST: \`${worstChapter}\`
 https://deltaruneost.crab.trade/gauntlet`;
 	}, [results, queue]);
@@ -165,7 +165,8 @@ https://deltaruneost.crab.trade/gauntlet`;
 			<div className={styles.results}>
 				<h1>Results</h1>
 				<p>
-					Tracks Guessed Correctly: {results!.filter(x => x.correct).length}/{results!.length}
+					Tracks Guessed Correctly: {results!.filter(x => x.correct).length}/{results!.length} (
+					{((results!.filter(x => x.correct).length / results!.length) * 100).toFixed(2)}%)
 				</p>
 				<p>Average # of Guesses: {+(results!.reduce((l, c) => l + c.guesses, 0) / results!.length).toFixed(2)}</p>
 				<p>Total Wrong Guesses: {+results!.filter(x => (x.correct ? x.guesses - 1 : x.guesses)).length.toFixed(2)}</p>
@@ -243,7 +244,10 @@ https://deltaruneost.crab.trade/gauntlet`;
 				</p>
 				<p className={styles.correct}>
 					Correct: {results?.filter(x => x.correct)?.length ?? 0}/{results?.length ?? 0}
-					<span className={styles.gray}> ({((results?.filter(x => x.correct)?.length ?? 0) / (results?.length || 1) * 100).toFixed(1)}%)</span>
+					<span className={styles.gray}>
+						{" "}
+						({(((results?.filter(x => x.correct)?.length ?? 0) / (results?.length || 1)) * 100).toFixed(1)}%)
+					</span>
 				</p>
 			</header>
 			{analyzer && (
