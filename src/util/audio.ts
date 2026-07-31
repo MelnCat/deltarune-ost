@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { LRUCache } from "lru-cache";
 
-const audioCache = new LRUCache<string, ArrayBuffer>({
+const cacheContext = new AudioContext();
+const audioCache = new LRUCache<string, AudioBuffer>({
 	max: 10,
 	async fetchMethod(k) {
-		return fetch(k).then(x => x.arrayBuffer());
+		return cacheContext.decodeAudioData(await (await fetch(k)).arrayBuffer());
 	},
 });
 
@@ -35,7 +36,7 @@ export const useAudio = ({
 		const buffers = await Promise.all(
 			paths.map(async x => {
 				const cached = await audioCache.forceFetch(x);
-				return ctx.decodeAudioData(cached.slice(0));
+				return cached;
 			}),
 		);
 		if (audioCtx.current !== ctx) {

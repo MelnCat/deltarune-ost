@@ -3,7 +3,7 @@ import { Background, type BackgroundType } from "#/components/Background";
 import { Button } from "#/components/Button";
 import { VolumeSlider } from "#/components/VolumeSlider";
 import { Track, tracks } from "#/data/ost";
-import { useAudio } from "#/util/audio";
+import { preloadAudio, useAudio } from "#/util/audio";
 import { normalizeText } from "#/util/text";
 import NumberFlow from "@number-flow/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -28,6 +28,7 @@ const randomBackgrounds: BackgroundType[] = ["battle"];
 function RouteComponent() {
 	const [volume, setVolume] = useLocalStorage("volume", 100);
 	const [track, setTrack] = useState<Track | null>(null);
+	const [nextTrack, setNextTrack] = useState<Track | null>(null);
 	const [loadState, setLoadState] = useState<LoadState>("none");
 	const [guess, setGuess] = useState("");
 	const [wrong, setWrong] = useState<string[]>([]);
@@ -47,11 +48,16 @@ function RouteComponent() {
 		},
 	});
 
+	const getRandomTrack = (current: Track | null = null) => {
+		const choices = current === null ? tracks : tracks.filter(x => x !== current);
+		return choices[Math.floor(Math.random() * choices.length)];
+	};
+
 	const randomize = () => {
-		const choices = track === null ? tracks : tracks.filter(x => x !== track);
-		const rand = choices[Math.floor(Math.random() * choices.length)];
 		setLoadState("loading");
-		setTrack(rand);
+		const newTrack = nextTrack ?? getRandomTrack(track);
+		setTrack(newTrack);
+		setNextTrack(getRandomTrack(newTrack));
 		setGuess("");
 		setWrong([]);
 		setBackground(randomBackgrounds[Math.floor(Math.random() * randomBackgrounds.length)]);
@@ -64,6 +70,11 @@ function RouteComponent() {
 	useEffect(() => {
 		randomize();
 	}, []);
+	useEffect(() => {
+		for (const path of nextTrack?.paths ?? []) {
+			preloadAudio(path);
+		}
+	}, [nextTrack]);
 
 	const submit: React.SubmitEventHandler<HTMLFormElement> = e => {
 		e.preventDefault();
@@ -185,7 +196,7 @@ function RouteComponent() {
 			)}
 			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
-            <QuitButton />
+			<QuitButton />
 			<AnimatePresence>
 				<motion.div className={styles.backgroundContainer} key={background} exit={{ opacity: 0 }}>
 					<Background type={background} />
