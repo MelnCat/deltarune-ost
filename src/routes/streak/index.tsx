@@ -13,6 +13,7 @@ import { useLocalStorage } from "usehooks-ts";
 import styles from "./index.module.css";
 import glowingSnow from "@/assets/music/tv_results_screen.ogg";
 import { AnimatePresence, motion } from "motion/react";
+import { QuitButton } from "#/components/QuitButton";
 
 const glowingSnowPath = [glowingSnow];
 
@@ -184,6 +185,7 @@ function RouteComponent() {
 			)}
 			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
+            <QuitButton />
 			<AnimatePresence>
 				<motion.div className={styles.backgroundContainer} key={background} exit={{ opacity: 0 }}>
 					<Background type={background} />
