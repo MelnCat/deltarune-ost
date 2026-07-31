@@ -5,15 +5,21 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { match } from "ts-pattern";
 import ch3_board3 from "../assets/music/ch3_board3.ogg";
+import festival from "../assets/music/festival.ogg";
+import castle_top from "../assets/music/castle_top.ogg";
+import board_sword_music from "../assets/music/board_sword_music.ogg";
+import mansion from "../assets/music/mansion.ogg";
 import styles from "./index.module.css";
 import { useAudio } from "#/util/audio";
 import { AudioVisualizer } from "#/components/AudioVisualizer";
 
 export const Route = createFileRoute("/")({ component: App });
 
-const audioPaths = [ch3_board3];
+const randomAudio = [ch3_board3, festival, castle_top, board_sword_music, mansion];
 function App() {
 	const [hovered, setHovered] = useState("");
+	const [audioPaths] = useState(() => [randomAudio[Math.floor(Math.random() * randomAudio.length)]]);
+
 	const audio = useAudio({
 		volume: 50,
 		paths: audioPaths,
