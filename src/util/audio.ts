@@ -1,6 +1,26 @@
 import { useEffect, useRef, useState } from "react";
+import { LRUCache } from "lru-cache";
 
-export const useAudio = ({ volume, paths, setLoading }: { volume: number; paths: string[] | null; setLoading?: (loading: boolean) => void }) => {
+const audioCache = new LRUCache<string, ArrayBuffer>({
+	max: 10,
+	async fetchMethod(k) {
+		return fetch(k).then(x => x.arrayBuffer());
+	},
+});
+
+export const preloadAudio = async (path: string) => {
+	await audioCache.fetch(path);
+};
+
+export const useAudio = ({
+	volume,
+	paths,
+	setLoading,
+}: {
+	volume: number;
+	paths: string[] | null;
+	setLoading?: (loading: boolean) => void;
+}) => {
 	const audioCtx = useRef<AudioContext | null>(null);
 	const gain = useRef<GainNode | null>(null);
 
@@ -12,7 +32,12 @@ export const useAudio = ({ volume, paths, setLoading }: { volume: number; paths:
 		const ctx = (audioCtx.current ??= new AudioContext());
 		const analyzerNode = ctx.createAnalyser();
 		analyzerNode.fftSize = 2048;
-		const buffers = await Promise.all(paths.map(x => fetch(x).then(x => x.arrayBuffer().then(x => ctx.decodeAudioData(x)))));
+		const buffers = await Promise.all(
+			paths.map(async x => {
+				const cached = await audioCache.forceFetch(x);
+				return ctx.decodeAudioData(cached.slice(0));
+			}),
+		);
 		if (audioCtx.current !== ctx) {
 			if (ctx.state !== "closed") ctx.close();
 			return;
@@ -58,6 +83,6 @@ export const useAudio = ({ volume, paths, setLoading }: { volume: number; paths:
 	}, [paths]);
 	return {
 		stop,
-        analyzer
+		analyzer,
 	};
 };

@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GauntletIndexRouteImport } from './routes/gauntlet/index'
 import { Route as StreakIndexRouteImport } from './routes/streak/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GauntletIndexRoute = GauntletIndexRouteImport.update({
+  id: '/gauntlet/',
+  path: '/gauntlet/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StreakIndexRoute = StreakIndexRouteImport.update({
@@ -25,27 +31,31 @@ const StreakIndexRoute = StreakIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/gauntlet/': typeof GauntletIndexRoute
   '/streak/': typeof StreakIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/gauntlet': typeof GauntletIndexRoute
   '/streak': typeof StreakIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/gauntlet/': typeof GauntletIndexRoute
   '/streak/': typeof StreakIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/streak/'
+  fullPaths: '/' | '/gauntlet/' | '/streak/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/streak'
-  id: '__root__' | '/' | '/streak/'
+  to: '/' | '/gauntlet' | '/streak'
+  id: '__root__' | '/' | '/gauntlet/' | '/streak/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GauntletIndexRoute: typeof GauntletIndexRoute
   StreakIndexRoute: typeof StreakIndexRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gauntlet/': {
+      id: '/gauntlet/'
+      path: '/gauntlet'
+      fullPath: '/gauntlet/'
+      preLoaderRoute: typeof GauntletIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/streak/': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GauntletIndexRoute: GauntletIndexRoute,
   StreakIndexRoute: StreakIndexRoute,
 }
 export const routeTree = rootRouteImport
