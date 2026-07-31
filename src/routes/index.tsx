@@ -12,14 +12,14 @@ export const Route = createFileRoute("/")({ component: App });
 function App() {
 	const [hovered, setHovered] = useState("");
 
-    const description = match(hovered)
-        .with("streak", () => "Keep going until you fail to guess a song in 3 tries. Try to get a high score!")
-        .with("gauntlet", () => "Go through every single OST track in a random order, and see how many of them you remember!")
-        .otherwise(() => "Made by melncat.")
+	const description = match(hovered)
+		.with("streak", () => "Keep going until you fail to guess a song in 3 tries. Try to get a high score!")
+		.with("gauntlet", () => "Go through every single OST track in a random order, and see how many of them you remember!")
+		.otherwise(() => "Made by melncat.");
 
 	useBgm(ch3_board3, 0.5);
 	return (
-		<main>
+		<main className={styles.main}>
 			<div className={styles.title}>
 				<div className={styles.logo}>
 					<img src={deltaruneHeart} alt="DELTARUNE" />
@@ -27,20 +27,20 @@ function App() {
 					<div className={`${styles.logoOverlay} ${styles.logoImageOverlay}`}></div>
 				</div>
 				<h1>Soundtrack Trivia</h1>
-				<section className={styles.panes}>
-					<section>
-						<MainLink to="streak" active={hovered === "streak"} onHover={() => setHovered("streak")}>
-							Streak
-						</MainLink>
-						<MainLink to="gauntlet" active={hovered === "gauntlet"} onHover={() => setHovered("gauntlet")}>
-							Entire Fucking OST
-						</MainLink>
-					</section>
-					<section >
-						<p className={styles.description}>{description}</p>
-					</section>
-				</section>
 			</div>
+			<section className={styles.panes}>
+				<section>
+					<MainLink to="streak" active={hovered === "streak"} onHover={() => setHovered("streak")}>
+						Streak
+					</MainLink>
+					<MainLink to="gauntlet" active={hovered === "gauntlet"} onHover={() => setHovered("gauntlet")}>
+						OST Gauntlet
+					</MainLink>
+				</section>
+				<section>
+					<p className={styles.description}>{description}</p>
+				</section>
+			</section>
 		</main>
 	);
 }

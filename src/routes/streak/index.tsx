@@ -7,13 +7,13 @@ import { preloadAudio, useAudio } from "#/util/audio";
 import { normalizeText } from "#/util/text";
 import NumberFlow from "@number-flow/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { match } from "ts-pattern";
 import { useLocalStorage } from "usehooks-ts";
-import styles from "./index.module.css";
 import glowingSnow from "@/assets/music/tv_results_screen.ogg";
 import { AnimatePresence, motion } from "motion/react";
 import { QuitButton } from "#/components/QuitButton";
+import styles from "./index.module.css";
 
 const glowingSnowPath = [glowingSnow];
 

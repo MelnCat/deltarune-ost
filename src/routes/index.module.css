@@ -36,7 +36,9 @@
 		.logoImageOverlay {
 			background-image: url("../assets/img/star.gif");
 			background-size: 1em 1em;
-			animation: scroll-bg 1s infinite linear, overlay-fade 2s linear 1s forwards;
+			animation:
+				scroll-bg 1s infinite linear,
+				overlay-fade 2s linear 1s forwards;
 			opacity: calc(1 - var(--t));
 		}
 	}
@@ -49,11 +51,20 @@
 }
 
 .panes {
-    display: grid;
-    grid-template-columns: 10em 12em;
+	display: grid;
+	grid-template-columns: 8em 12em;
+	margin: 0 auto;
+	margin-top: 0.5em;
+	font-size: 1.5em;
+	gap: 1em;
 }
 .description {
-    color: #888888;
+	color: #888888;
+}
+.main {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
 }
 
 @keyframes overlay-fade {
@@ -71,5 +82,53 @@
 	}
 	to {
 		background-position: 1em 1em;
+	}
+}
+
+@media (width < 1225px) {
+	.title {
+		font-size: 1em;
+	}
+	.panes {
+		font-size: 1.25em;
+	}
+}
+
+@media (width < 990px) {
+	.panes {
+		grid-template-columns: 12em;
+	}
+}
+
+@media (width < 800px) {
+	.title {
+		font-size: 0.75em;
+	}
+}
+
+@media (width < 620px) {
+	.title {
+		font-size: 0.6em;
+	}
+	.panes {
+		font-size: 1em;
+	}
+}
+
+@media (width < 500px) {
+	.title {
+		font-size: 0.5em;
+	}
+	.panes {
+		grid-template-columns: 8em;
+	}
+}
+
+@media (width < 400px) {
+	.title {
+		font-size: 0.4em;
+	}
+	.panes {
+		grid-template-columns: 8em;
 	}
 }
