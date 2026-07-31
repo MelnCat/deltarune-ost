@@ -254,7 +254,7 @@ https://deltaruneost.crab.trade/gauntlet`;
 			)}
 			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
-			<QuitButton />
+			<QuitButton prompt="Quit? Progress WILL be saved." />
 			<Button className={styles.resetButton} onClick={promptReset}>
 				Reset
 			</Button>

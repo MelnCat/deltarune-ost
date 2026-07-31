@@ -2,10 +2,10 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "./Button";
 import styles from "./QuitButton.module.css";
 
-export const QuitButton = () => {
+export const QuitButton = ({ prompt = "Quit? Progress will not be saved." }: { prompt?: string }) => {
 	const navigate = useNavigate();
 	const quit = () => {
-        if (!confirm("Quit? Progress will not be saved.")) return;
+		if (!confirm(prompt)) return;
 		navigate({ to: "/" });
 	};
 	return (

@@ -71,7 +71,7 @@ export const AudioVisualizer = ({ analyzer, color }: { analyzer: AnalyserNode; c
 			const barSize = canvas.width / barCount;
 
 			for (let i = 0; i < barCount; i++) {
-				const t = (i / barCount) * 0.9 + 0.1;
+				const t = (i / barCount) * 0.5 + 0.4;
 				const binPos = min * Math.pow(max / min, t);
 
 				const low = Math.floor(binPos);
