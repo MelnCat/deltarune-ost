@@ -11,8 +11,10 @@ export class Track {
 	readonly album: string[];
 	readonly paths: string[];
 	readonly chapters: number[];
+	readonly responses: Record<string, string>;
 	whenPlay: (input: string, normalized: string) => boolean;
 	matches: (input: string, normalized: string) => boolean;
+	messageFor: (input: string, normalized: string) => string;
 
 	constructor(args: TrackArgs) {
 		this.name = args.name;
@@ -31,8 +33,13 @@ export class Track {
 			return (found as { default: string }).default;
 		});
 		this.chapters = args.chapters ?? [];
+		this.responses = args.responses ?? {};
 		this.whenPlay = args.whenPlay ?? (() => true);
 		this.matches = args.matches ?? ((input, normalized) => equalsNormalized(normalized, this.normalizedName));
+		this.messageFor =
+			args.messageFor ??
+			((input, normalized) =>
+				normalized in this.responses ? this.responses[normalized].replaceAll("{input}", input) : `"${input}" is incorrect.`);
 	}
 }
 
@@ -41,8 +48,10 @@ interface TrackArgs {
 	filename: string;
 	album: string | string[];
 	chapters?: number[];
+	responses?: Record<string, string>;
 	whenPlay?(this: Track, input: string, normalized: string): boolean;
 	matches?(this: Track, input: string, normalized: string): boolean;
+	messageFor?: (input: string, normalized: string) => string;
 }
 
 export const tracks: Track[] = [];
@@ -139,7 +148,8 @@ register({
 			normalized.length > 5 &&
 			normalized.match(/^[oh]+$/) !== null &&
 			normalized.split("").filter(x => x === "o").length > 3 &&
-			normalized.split("").filter(x => x === "h").length > 3
+			normalized.split("").filter(x => x === "h").length > 3 &&
+			normalized.startsWith("o")
 		);
 	},
 });
@@ -197,7 +207,7 @@ register({ name: "Hammer of Justice", filename: "ch4_extra_boss", album: "DELTAR
 register({ name: "Heavy Footsteps", filename: "titan_pre", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "Hymn", filename: "church_hymn", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "It's TV Time!", filename: "tenna_battle", album: "DELTARUNE Chapters 3+4 OST" });
-register({ name: "KING OF ROLYPOLY", filename: "trank", album: "DELTARUNE Chapters 3+4 OST" });
+register({ name: "KING OF ROLYPOLY", filename: "trank", album: "DELTARUNE Chapters 3+4 OST", responses: { trank: `It's not "{input}".` } });
 register({ name: "Knock You Down!! (Rhythm Ver.)", filename: "rhythm_knockdown_combined", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "Metaphysical Challenge", filename: "board_4_challenge", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "MIKE, the BOARD, please!", filename: "ch3_tvtime", album: "DELTARUNE Chapters 3+4 OST" });
@@ -235,7 +245,12 @@ register({
 	},
 });
 register({ name: "The Ol' Jitterbug", filename: "jitterbug", album: "DELTARUNE Chapters 3+4 OST" });
-register({ name: "The place where it rained", filename: "rain", album: "DELTARUNE Chapters 3+4 OST" });
+register({
+	name: "The place where it rained",
+	filename: "rain",
+	album: "DELTARUNE Chapters 3+4 OST",
+	responses: { itsrainingsomewhereelse: `"{input}"? I think you've got the wrong game.` },
+});
 register({ name: "The Second Sanctuary", filename: "second_church", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "The Third Sanctuary", filename: "church_zone3", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "TV WORLD", filename: "tv_world", album: "DELTARUNE Chapters 3+4 OST" });
@@ -248,7 +263,12 @@ register({ name: "4rd Sanctuary", filename: "4rd_sanctuary", album: "DELTARUNE C
 register({ name: "Beautiful Bathtime", filename: "snd_flowery_bromide_f", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Bratfession...?", filename: "bratty_confession", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Catfession...?", filename: "catti_confession", album: "DELTARUNE Chapter 5 OST" });
-register({ name: "Chapter 5 Logo", filename: "deltarune_logo_ch5_itoki", album: "DELTARUNE Chapter 5 OST" });
+register({
+	name: "Chapter 5 Logo",
+	filename: "deltarune_logo_ch5_itoki",
+	album: "DELTARUNE Chapter 5 OST",
+	responses: { deltarune: `Wow, you hear "DELTARUNE" and think "oh it's gotta be called DELTARUNE"?? Wrong, wrong, WRONG!` },
+});
 register({ name: "Cutie Mew Mew Magic", filename: "pink", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Dreamwatchers", filename: "flowery_iog_extended", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Festival", filename: "festival", album: "DELTARUNE Chapter 5 OST" });
@@ -259,6 +279,7 @@ register({
 	matches(input, normalized) {
 		return equalsNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("credits");
 	},
+	responses: { fieldofhopesanddreams: `"{input}" is incorrect. Be more specific.` },
 });
 register({ name: "Flower Castle", filename: "flower_castle", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Flower Foyer", filename: "castle_foyer", album: "DELTARUNE Chapter 5 OST" });
@@ -278,7 +299,13 @@ register({ name: "Loving Steps", filename: "blue_flower", album: "DELTARUNE Chap
 register({ name: "Onsen", filename: "running_water", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Petal Dance", filename: "miniboss_new_section_idea_wip", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Pink", filename: "pink_theme", album: "DELTARUNE Chapter 5 OST" });
-register({ name: "Pirate Dojo", filename: "pirate_zone", album: "DELTARUNE Chapter 5 OST" });
+register({
+	name: "Pirate Dojo",
+	filename: "pirate_zone",
+	album: "DELTARUNE Chapter 5 OST",
+	messageFor: (input, normalized) =>
+		normalized.includes("gaster") ? `"${input}" is INCORRECT! NOT EVERYTHING IS GASTER!!!!!` : `"${input}" is incorrect.`,
+});
 register({ name: "Quiet Glade", filename: "piano_ambience", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Rakuichi Buster", filename: "rakuichi_buster_wip", album: "DELTARUNE Chapter 5 OST" });
 register({ name: "Ride the Board", filename: "flowery_skateboard", album: "DELTARUNE Chapter 5 OST" });

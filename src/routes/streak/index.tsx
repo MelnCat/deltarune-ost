@@ -154,7 +154,7 @@ function RouteComponent() {
 					<div className={styles.wrong}>
 						{wrong.map((x, i) => (
 							<div className={styles.wrongText} key={i}>
-								"{x}" is incorrect.
+								{track && track.messageFor(x, normalizeText(x))}
 							</div>
 						))}
 					</div>
