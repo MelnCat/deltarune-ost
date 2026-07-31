@@ -9,3 +9,9 @@
 	bottom: 0.5em;
 	left: 0.5em;
 }
+p.correct {
+    color: #00ff00;
+}
+.gray {
+    color: #888888;
+}

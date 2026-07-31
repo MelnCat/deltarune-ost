@@ -241,6 +241,10 @@ https://deltaruneost.crab.trade/gauntlet`;
 				<p>
 					Completed: {results?.length ?? 0}/{queue?.length ?? 0}
 				</p>
+				<p className={styles.correct}>
+					Correct: {results?.filter(x => x.correct)?.length ?? 0}/{results?.length ?? 0}
+					<span className={styles.gray}> ({((results?.filter(x => x.correct)?.length ?? 0) / (results?.length ?? 0) * 100).toFixed(1)}%)</span>
+				</p>
 			</header>
 			{analyzer && (
 				<AudioVisualizer

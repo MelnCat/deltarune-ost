@@ -45,14 +45,14 @@ function App() {
 				</div>
 				<h1>Soundtrack Trivia</h1>
 			</div>
-			<section className={styles.panes}>
+			<section className={`${styles.panes} ${results?.length ? styles.wide : ""}`}>
 				<section>
 					<MainLink to="/streak" active={hovered === "streak"} onHover={() => setHovered("streak")}>
 						Streak
 					</MainLink>
 					<MainLink to="/gauntlet" active={hovered === "gauntlet"} onHover={() => setHovered("gauntlet")}>
 						OST Gauntlet
-						{results ? (
+						{results?.length ? (
 							<span className={styles.gray}>
 								{" "}
 								({results.length}/{tracks.length})
