@@ -1,4 +1,4 @@
-import { equalsNormalized, normalizeText } from "#/util/text";
+import { equalsNormalized, includesNormalized, normalizeText } from "#/util/text";
 
 const songs = import.meta.glob("./*", { base: "../assets/music", eager: true });
 const sounds = import.meta.glob("./*", { base: "../assets/audiogroup_default", eager: true });
@@ -208,7 +208,14 @@ register({ name: "Heavy Footsteps", filename: "titan_pre", album: "DELTARUNE Cha
 register({ name: "Hymn", filename: "church_hymn", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "It's TV Time!", filename: "tenna_battle", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "KING OF ROLYPOLY", filename: "trank", album: "DELTARUNE Chapters 3+4 OST", responses: { trank: `It's not "{input}".` } });
-register({ name: "Knock You Down!! (Rhythm Ver.)", filename: "rhythm_knockdown_combined", album: "DELTARUNE Chapters 3+4 OST" });
+register({
+	name: "Knock You Down!! (Rhythm Ver.)",
+	filename: "rhythm_knockdown_combined",
+	album: "DELTARUNE Chapters 3+4 OST",
+	matches(input, normalized) {
+		return includesNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("rhythm");
+	},
+});
 register({ name: "Metaphysical Challenge", filename: "board_4_challenge", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "MIKE, the BOARD, please!", filename: "ch3_tvtime", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "Mysterious Ringing", filename: "bell_ambience", album: "DELTARUNE Chapters 3+4 OST" });
@@ -243,9 +250,9 @@ register({
 	matches(input, normalized) {
 		return equalsNormalized(normalized, this.normalizedName) && input.includes("?");
 	},
-    responses: {
-        thelegend: `"{input}" is a different song.`
-    }
+	responses: {
+		thelegend: `"{input}" is a different song.`,
+	},
 });
 register({ name: "The Ol' Jitterbug", filename: "jitterbug", album: "DELTARUNE Chapters 3+4 OST" });
 register({
@@ -280,7 +287,7 @@ register({
 	filename: "ch5_credits",
 	album: "DELTARUNE Chapter 5 OST",
 	matches(input, normalized) {
-		return equalsNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("credits");
+		return includesNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("credits");
 	},
 	responses: { fieldofhopesanddreams: `"{input}" is incorrect. Be more specific.` },
 });
