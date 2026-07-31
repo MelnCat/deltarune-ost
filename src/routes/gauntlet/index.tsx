@@ -12,7 +12,7 @@ import { useLocalStorage } from "usehooks-ts";
 import glowingSnow from "@/assets/music/tv_results_screen.ogg";
 import { AnimatePresence, motion } from "motion/react";
 import { QuitButton } from "#/components/QuitButton";
-import { shuffle } from "#/util/util";
+import { shuffle, useGauntletResults } from "#/util/util";
 import prettyMs from "pretty-ms";
 import styles from "./index.module.css";
 
@@ -28,7 +28,7 @@ const randomBackgrounds: BackgroundType[] = ["battle"];
 
 function RouteComponent() {
 	const [volume, setVolume] = useLocalStorage("volume", 100);
-	const [results, setResults] = useLocalStorage<{ guesses: number; correct: boolean }[] | null>("gauntletResults", null);
+	const [results, setResults] = useGauntletResults();
 	const [startTime, setStartTime] = useLocalStorage<number>("gauntletStartTime", 0);
 	const [endTime, setEndTime] = useLocalStorage<number>("gauntletEndTime", 0);
 	const [queue, setQueue] = useLocalStorage<string[] | null>("gauntletQueue", null);
@@ -153,7 +153,7 @@ https://deltaruneost.crab.trade/gauntlet`;
 	};
 	const goToResults = () => {
 		setLoadState("results");
-		setBackground("green_room");
+		setBackground("snow");
 		if (endTime === 0) {
 			setEndTime(Date.now());
 		}
@@ -249,7 +249,7 @@ https://deltaruneost.crab.trade/gauntlet`;
 						.with("correct", () => "#00ff00")
 						.with("done", () => "#ff00ff")
 						.with("give_up", () => "#ff0000")
-						.otherwise(() => "#888888")}
+						.otherwise(() => "#ffffff")}
 				/>
 			)}
 			<div className={styles.container}>{body}</div>

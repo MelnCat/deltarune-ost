@@ -52,13 +52,13 @@
 
 .panes {
 	display: grid;
-	grid-template-columns: 8em 12em;
+	grid-template-columns: 10em 12em;
 	margin: 0 auto;
 	margin-top: 0.5em;
 	font-size: 1.5em;
-	gap: 1em;
+	gap: 0.25em;
 }
-.description {
+.gray {
 	color: #888888;
 }
 .main {
@@ -120,7 +120,7 @@
 		font-size: 0.5em;
 	}
 	.panes {
-		grid-template-columns: 8em;
+		grid-template-columns: 9em;
 	}
 }
 
@@ -129,6 +129,6 @@
 		font-size: 0.4em;
 	}
 	.panes {
-		grid-template-columns: 8em;
+		grid-template-columns: 9em;
 	}
 }

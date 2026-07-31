@@ -243,6 +243,9 @@ register({
 	matches(input, normalized) {
 		return equalsNormalized(normalized, this.normalizedName) && input.includes("?");
 	},
+    responses: {
+        thelegend: `"{input}" is a different song.`
+    }
 });
 register({ name: "The Ol' Jitterbug", filename: "jitterbug", album: "DELTARUNE Chapters 3+4 OST" });
 register({

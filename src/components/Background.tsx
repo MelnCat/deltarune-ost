@@ -8,7 +8,7 @@ import cardCastle from "@/assets/img/background/card_castle.png";
 
 import { match } from "ts-pattern";
 
-export type BackgroundType = "battle" | "green_room" | "card_castle";
+export type BackgroundType = "battle" | "snow" | "card_castle";
 
 export const Background = ({ type }: { type: BackgroundType }) => {
 	return match(type)
@@ -28,7 +28,7 @@ export const Background = ({ type }: { type: BackgroundType }) => {
 				className={`${styles.background}`}
 			/>
 		))
-		.with("green_room", () => (
+		.with("snow", () => (
 			<div
 				style={{
 					backgroundImage: `url("${snowy}")`,

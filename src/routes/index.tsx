@@ -12,6 +12,10 @@ import mansion from "../assets/music/mansion.ogg";
 import styles from "./index.module.css";
 import { useAudio } from "#/util/audio";
 import { AudioVisualizer } from "#/components/AudioVisualizer";
+import { useLocalStorage } from "usehooks-ts";
+import { useGauntletResults } from "#/util/util";
+import { tracks } from "#/data/ost";
+import { Background } from "#/components/Background";
 
 export const Route = createFileRoute("/")({ component: App });
 
@@ -19,6 +23,7 @@ const randomAudio = [ch3_board3, festival, castle_top, board_sword_music, mansio
 function App() {
 	const [hovered, setHovered] = useState("");
 	const [audioPaths] = useState(() => [randomAudio[Math.floor(Math.random() * randomAudio.length)]]);
+	const [results, setResults] = useGauntletResults();
 
 	const audio = useAudio({
 		volume: 50,
@@ -47,10 +52,16 @@ function App() {
 					</MainLink>
 					<MainLink to="/gauntlet" active={hovered === "gauntlet"} onHover={() => setHovered("gauntlet")}>
 						OST Gauntlet
+						{results ? (
+							<span className={styles.gray}>
+								{" "}
+								({results.length}/{tracks.length})
+							</span>
+						) : null}
 					</MainLink>
 				</section>
 				<section>
-					<p className={styles.description}>{description}</p>
+					<p className={styles.gray}>{description}</p>
 				</section>
 			</section>
 			{audio.analyzer && <AudioVisualizer analyzer={audio.analyzer} color="#141c6a" />}

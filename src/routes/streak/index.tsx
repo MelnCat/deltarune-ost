@@ -36,6 +36,7 @@ function RouteComponent() {
 	const [losingTrack, setLosingTrack] = useState<Track | null>(null);
 	const [background, setBackground] = useState<BackgroundType>("battle");
 	const inputRef = useRef<HTMLInputElement | null>(null);
+	const [highScore, setHighScore] = useLocalStorage("streakHighScore", 0);
 
 	const { analyzer } = useAudio({
 		volume,
@@ -83,6 +84,7 @@ function RouteComponent() {
 		if (track.matches(guess, normalizeText(guess))) {
 			setLoadState("correct");
 			setStreak(streak + 1);
+			if (streak + 1 > highScore) setHighScore(streak + 1);
 		} else {
 			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
@@ -98,7 +100,7 @@ function RouteComponent() {
 	};
 	const goToResults = () => {
 		setLoadState("results");
-		setBackground("green_room");
+		setBackground("snow");
 	};
 	const body = match(loadState)
 		.with("none", () => null)
@@ -108,6 +110,7 @@ function RouteComponent() {
 				<h1>Results</h1>
 				<p>Final Streak: {streak}</p>
 				<p>Lost to: {losingTrack?.name ?? "?"}</p>
+				{streak === highScore ? <p className={styles.new}>New high score!</p> : null}
 				<div className={styles.buttonRow}>
 					<Button autoFocus onClick={playAgain}>
 						Play Again
@@ -178,12 +181,17 @@ function RouteComponent() {
 		.exhaustive();
 	return (
 		<div className={styles.content}>
-			<header className={styles.header}>
+			<header className={`${styles.header} ${styles.streakHeader}`}>
 				<h1>Streak</h1>
-				<p>
+				<p data-new={highScore === streak || null}>
 					Current Streak: <NumberFlow value={streak} />
 				</p>
 			</header>
+			<div className={styles.highScore} data-new={highScore === streak || null}>
+				<p>
+					High Score: <NumberFlow value={highScore} />
+				</p>
+			</div>
 			{analyzer && (
 				<AudioVisualizer
 					analyzer={analyzer}
@@ -191,7 +199,7 @@ function RouteComponent() {
 						.with("correct", () => "#00ff00")
 						.with("done", () => "#ff00ff")
 						.with("give_up", () => "#ff0000")
-						.otherwise(() => "#888888")}
+						.otherwise(() => "#ffffff")}
 				/>
 			)}
 			<div className={styles.container}>{body}</div>
