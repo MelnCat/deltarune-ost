@@ -32,7 +32,7 @@ function RouteComponent() {
 		track,
 		setLoading: loading => {
 			setLoadState(prev => {
-				if (prev === "correct" || prev === "give_up") return prev;
+				if (prev === "correct" || prev === "give_up" || prev === "results") return prev;
 				return loading ? "loading" : "done";
 			});
 		},
@@ -45,6 +45,11 @@ function RouteComponent() {
 		setTrack(rand);
 		setGuess("");
 		setWrong([]);
+	};
+	const playAgain = () => {
+		setWrong([]);
+		setStreak(0);
+		randomize();
 	};
 	useEffect(() => {
 		randomize();
@@ -78,9 +83,14 @@ function RouteComponent() {
 		.with("results", () => (
 			<div className={styles.results}>
 				<h1>Results</h1>
-                <p>Final Streak: {streak}</p>
-                <p>Lost to: {track!.name}</p>
-                <Link to="/"><Button>Back to Title</Button></Link>
+				<p>Final Streak: {streak}</p>
+				<p>Lost to: {track!.name}</p>
+				<div className={styles.buttonRow}>
+					<Button autoFocus onClick={playAgain}>Play Again</Button>
+					<Link to="/">
+						<Button>Back to Title</Button>
+					</Link>
+				</div>
 			</div>
 		))
 		.with("done", "correct", "give_up", () => (

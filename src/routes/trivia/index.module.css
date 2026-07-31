@@ -49,7 +49,6 @@
 	color: #ff0000;
 }
 .form {
-	width: 18em;
 	display: flex;
 	flex-direction: column;
 	gap: 0.25em;
@@ -125,4 +124,9 @@
 		width: 12em;
         font-size: 0.75em;
 	}
+}
+
+.buttonRow {
+    display: flex;
+    gap: 0.25em;
 }

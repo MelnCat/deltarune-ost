@@ -1,14 +1,19 @@
 .slider {
-    position: fixed;
-    bottom: 0.25em;
-    right: 0.25em;
+	position: fixed;
+	bottom: 0.25em;
+	right: 0.25em;
 	display: flex;
 	align-items: center;
-    flex-direction: column;
+	flex-direction: column;
 	gap: 0.25em;
-    input {
-		writing-mode: vertical-rl;
-        direction: rtl;
-        height: 5em;
+	height: 7em;
+	*[data-upper] {
+		height: 0 !important;
 	}
+}
+
+.sliderContainer {
+    height: 100%;
+    position: relative;
+    display: flex;
 }

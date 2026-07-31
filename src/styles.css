@@ -13,8 +13,8 @@ body,
 	font-family: "Determination Sans", sans-serif;
 	color: #ffffff;
 	font-size: 32px;
-    margin: 0;
-    image-rendering: pixelated;
+	margin: 0;
+	image-rendering: pixelated;
 }
 
 body {
@@ -47,7 +47,6 @@ body {
 	font-weight: 100 1000;
 }
 
-
 input {
 	border: #ffffff solid 0.16em;
 	background-color: transparent;
@@ -62,5 +61,28 @@ input {
 }
 
 p {
-    margin: 0;
+	margin: 0;
+}
+
+a {
+	text-decoration: none;
+}
+
+.range-slider {
+	border-radius: 0 !important;
+    background-color: #ffffff !important;
+}
+.range-slider__range {
+	translate: 0.5px 0;
+	scale: 1.1 1;
+	border-radius: 0 !important;
+	background-color: #ff0000 !important;
+}
+.range-slider__thumb.range-slider__thumb.range-slider__thumb {
+	border-radius: 0 ;
+	background-color: unset ;
+    background-image: url("./assets/img/soul/soul.png") ;
+    background-size: cover ;
+    width: 1em;
+    height: 1em;
 }
