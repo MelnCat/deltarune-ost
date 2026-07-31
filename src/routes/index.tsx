@@ -1,11 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import styles from "./index.module.css";
-import deltaruneHeart from "@/assets/img/deltarune_heart.svg";
-import { useBgm } from "#/util/bgm";
-import ch3_board3 from "../assets/music/ch3_board3.ogg";
 import { MainLink } from "#/components/MainLink";
+import { useBgm } from "#/util/bgm";
+import deltaruneHeart from "@/assets/img/deltarune_heart.svg";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { match } from "ts-pattern";
+import ch3_board3 from "../assets/music/ch3_board3.ogg";
+import styles from "./index.module.css";
 
 export const Route = createFileRoute("/")({ component: App });
 
@@ -13,7 +13,7 @@ function App() {
 	const [hovered, setHovered] = useState("");
 
     const description = match(hovered)
-        .with("trivia", () => "Keep going until you fail to guess a song in 3 tries. Try to get a high score!")
+        .with("streak", () => "Keep going until you fail to guess a song in 3 tries. Try to get a high score!")
         .with("gauntlet", () => "Go through every single OST track in a random order, and see how many of them you remember!")
         .otherwise(() => "Made by melncat.")
 
@@ -29,7 +29,7 @@ function App() {
 				<h1>Soundtrack Trivia</h1>
 				<section className={styles.panes}>
 					<section>
-						<MainLink to="trivia" active={hovered === "trivia"} onHover={() => setHovered("trivia")}>
+						<MainLink to="streak" active={hovered === "streak"} onHover={() => setHovered("streak")}>
 							Streak
 						</MainLink>
 						<MainLink to="gauntlet" active={hovered === "gauntlet"} onHover={() => setHovered("gauntlet")}>

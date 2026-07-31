@@ -103,9 +103,9 @@
 			width: 10em;
 		}
 	}
-    h1 {
-        font-size: 1.5em;
-    }
+	h1 {
+		font-size: 1.5em;
+	}
 	.container {
 		width: 12em;
 	}
@@ -117,16 +117,18 @@
 			width: 10em;
 		}
 	}
-    h1 {
-        font-size: 1.5em;
-    }
+	h1 {
+		font-size: 1.5em;
+	}
 	.container {
 		width: 12em;
-        font-size: 0.75em;
+		font-size: 0.75em;
 	}
 }
 
 .buttonRow {
-    display: flex;
-    gap: 0.25em;
+	display: flex;
+	gap: 0.25em;
+}
+.backgroundContainer {
 }

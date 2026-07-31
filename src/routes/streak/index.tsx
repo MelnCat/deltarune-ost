@@ -1,22 +1,28 @@
 import { AudioVisualizer } from "#/components/AudioVisualizer";
+import { Background, type BackgroundType } from "#/components/Background";
 import { Button } from "#/components/Button";
 import { VolumeSlider } from "#/components/VolumeSlider";
 import { Track, tracks } from "#/data/ost";
+import { useAudio } from "#/util/audio";
 import { normalizeText } from "#/util/text";
+import NumberFlow from "@number-flow/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { match } from "ts-pattern";
 import { useLocalStorage } from "usehooks-ts";
 import styles from "./index.module.css";
-import { match } from "ts-pattern";
-import { Background } from "#/components/Background";
-import { useAudio } from "#/util/audio";
-import NumberFlow from "@number-flow/react";
+import glowingSnow from "@/assets/music/tv_results_screen.ogg";
+import { AnimatePresence, motion } from "motion/react";
 
-export const Route = createFileRoute("/trivia/")({
+const glowingSnowPath = [glowingSnow];
+
+export const Route = createFileRoute("/streak/")({
 	component: RouteComponent,
 });
 
 type LoadState = "none" | "loading" | "done" | "correct" | "give_up" | "results";
+
+const randomBackgrounds: BackgroundType[] = ["battle"];
 
 function RouteComponent() {
 	const [volume, setVolume] = useLocalStorage("volume", 100);
@@ -25,11 +31,13 @@ function RouteComponent() {
 	const [guess, setGuess] = useState("");
 	const [wrong, setWrong] = useState<string[]>([]);
 	const [streak, setStreak] = useState(0);
+	const [losingTrack, setLosingTrack] = useState<Track | null>(null);
+	const [background, setBackground] = useState<BackgroundType>("battle");
 	const inputRef = useRef<HTMLInputElement | null>(null);
 
 	const { analyzer } = useAudio({
 		volume,
-		track,
+		paths: loadState === "results" ? glowingSnowPath : (track?.paths ?? null),
 		setLoading: loading => {
 			setLoadState(prev => {
 				if (prev === "correct" || prev === "give_up" || prev === "results") return prev;
@@ -45,6 +53,7 @@ function RouteComponent() {
 		setTrack(rand);
 		setGuess("");
 		setWrong([]);
+		setBackground(randomBackgrounds[Math.floor(Math.random() * randomBackgrounds.length)]);
 	};
 	const playAgain = () => {
 		setWrong([]);
@@ -66,16 +75,18 @@ function RouteComponent() {
 			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
 			if (wrong.length + 1 >= 3) {
-				setLoadState("give_up");
+				giveUp();
 			}
 			inputRef.current?.focus();
 		}
 	};
 	const giveUp = () => {
+		setLosingTrack(track);
 		setLoadState("give_up");
 	};
 	const goToResults = () => {
 		setLoadState("results");
+		setBackground("green_room");
 	};
 	const body = match(loadState)
 		.with("none", () => null)
@@ -84,9 +95,11 @@ function RouteComponent() {
 			<div className={styles.results}>
 				<h1>Results</h1>
 				<p>Final Streak: {streak}</p>
-				<p>Lost to: {track!.name}</p>
+				<p>Lost to: {losingTrack?.name ?? "?"}</p>
 				<div className={styles.buttonRow}>
-					<Button autoFocus onClick={playAgain}>Play Again</Button>
+					<Button autoFocus onClick={playAgain}>
+						Play Again
+					</Button>
 					<Link to="/">
 						<Button>Back to Title</Button>
 					</Link>
@@ -169,9 +182,13 @@ function RouteComponent() {
 						.otherwise(() => "#888888")}
 				/>
 			)}
-			<Background />
 			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
+			<AnimatePresence>
+				<motion.div className={styles.backgroundContainer} key={background} exit={{ opacity: 0 }}>
+					<Background type={background} />
+				</motion.div>
+			</AnimatePresence>
 		</div>
 	);
 }

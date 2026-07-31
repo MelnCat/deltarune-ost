@@ -10,43 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TriviaIndexRouteImport } from './routes/trivia/index'
+import { Route as StreakIndexRouteImport } from './routes/streak/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TriviaIndexRoute = TriviaIndexRouteImport.update({
-  id: '/trivia/',
-  path: '/trivia/',
+const StreakIndexRoute = StreakIndexRouteImport.update({
+  id: '/streak/',
+  path: '/streak/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/trivia/': typeof TriviaIndexRoute
+  '/streak/': typeof StreakIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/trivia': typeof TriviaIndexRoute
+  '/streak': typeof StreakIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/trivia/': typeof TriviaIndexRoute
+  '/streak/': typeof StreakIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/trivia/'
+  fullPaths: '/' | '/streak/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/trivia'
-  id: '__root__' | '/' | '/trivia/'
+  to: '/' | '/streak'
+  id: '__root__' | '/' | '/streak/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  TriviaIndexRoute: typeof TriviaIndexRoute
+  StreakIndexRoute: typeof StreakIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +58,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trivia/': {
-      id: '/trivia/'
-      path: '/trivia'
-      fullPath: '/trivia/'
-      preLoaderRoute: typeof TriviaIndexRouteImport
+    '/streak/': {
+      id: '/streak/'
+      path: '/streak'
+      fullPath: '/streak/'
+      preLoaderRoute: typeof StreakIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  TriviaIndexRoute: TriviaIndexRoute,
+  StreakIndexRoute: StreakIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

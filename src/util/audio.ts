@@ -1,19 +1,18 @@
-import type { Track } from "@/data/ost";
 import { useEffect, useRef, useState } from "react";
 
-export const useAudio = ({ volume, track, setLoading }: { volume: number; track: Track | null; setLoading?: (loading: boolean) => void }) => {
+export const useAudio = ({ volume, paths, setLoading }: { volume: number; paths: string[] | null; setLoading?: (loading: boolean) => void }) => {
 	const audioCtx = useRef<AudioContext | null>(null);
 	const gain = useRef<GainNode | null>(null);
 
 	const [analyzer, setAnalyzer] = useState<AnalyserNode | null>(null);
 
-	const playTrack = async (track: Track) => {
+	const playTrack = async (paths: string[]) => {
 		stop();
 		setLoading?.(true);
 		const ctx = (audioCtx.current ??= new AudioContext());
 		const analyzerNode = ctx.createAnalyser();
 		analyzerNode.fftSize = 2048;
-		const buffers = await Promise.all(track.paths.map(x => fetch(x).then(x => x.arrayBuffer().then(x => ctx.decodeAudioData(x)))));
+		const buffers = await Promise.all(paths.map(x => fetch(x).then(x => x.arrayBuffer().then(x => ctx.decodeAudioData(x)))));
 		if (audioCtx.current !== ctx) {
 			if (ctx.state !== "closed") ctx.close();
 			return;
@@ -54,9 +53,9 @@ export const useAudio = ({ volume, track, setLoading }: { volume: number; track:
 		gain.current.gain.value = volume / 100;
 	}, [volume]);
 	useEffect(() => {
-		if (track) playTrack(track);
+		if (paths) playTrack(paths);
 		else stop();
-	}, [track]);
+	}, [paths]);
 	return {
 		stop,
         analyzer

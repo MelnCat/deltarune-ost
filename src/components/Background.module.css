@@ -6,5 +6,36 @@
 	height: 100vh;
 	z-index: -2;
 	pointer-events: none;
-    background-size: calc(640px * 2) calc(480px * 2);
+	background-size: cover;
+}
+.battle {
+	background-size: calc(640px * 2) calc(480px * 2);
+}
+.snow {
+	background-size: 4em;
+	opacity: 0.1;
+    animation: snow infinite 4s linear;
+}
+.snow2 {
+	background-size: 3em;
+	opacity: 0.1;
+    animation: snow2 infinite 4s linear;
+}
+
+@keyframes snow {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 4em 4em;
+    }
+}
+
+@keyframes snow2 {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: -3em 3em;
+    }
 }
