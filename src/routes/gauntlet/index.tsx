@@ -243,7 +243,7 @@ https://deltaruneost.crab.trade/gauntlet`;
 				</p>
 				<p className={styles.correct}>
 					Correct: {results?.filter(x => x.correct)?.length ?? 0}/{results?.length ?? 0}
-					<span className={styles.gray}> ({((results?.filter(x => x.correct)?.length ?? 0) / (results?.length ?? 0) * 100).toFixed(1)}%)</span>
+					<span className={styles.gray}> ({((results?.filter(x => x.correct)?.length ?? 0) / (results?.length || 1) * 100).toFixed(1)}%)</span>
 				</p>
 			</header>
 			{analyzer && (
