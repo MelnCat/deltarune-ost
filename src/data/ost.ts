@@ -22,7 +22,7 @@ export class Track {
 		this.filename = args.filename;
 		this.album = typeof args.album === "string" ? [args.album] : args.album;
 		this.paths = this.filename.split(", ").map(x => {
-			const found = songs[`./${x}.ogg`] ?? sounds[`./${x}.wav`] ?? extras[`./${x}.wav`];
+			const found = songs[`./${x}.ogg`] ?? sounds[`./${x}.wav`] ?? extras[`./${x}.wav`] ?? extras[`./${x}.flac`];
 			if (!found && x === "snd_usefountain") {
 				throw new Error("yeah you forgot snd_usefountain. it's in the chapter folders");
 			}
@@ -115,6 +115,14 @@ register({ name: "Acid Tunnel of Love", filename: "acid_tunnel", album: "DELTARU
 register({ name: "Almost To The Guys!", filename: "cyber_battle_prelude", album: "DELTARUNE Chapter 2 OST" });
 register({ name: "Attack of the Killer Queen", filename: "queen_boss", album: "DELTARUNE Chapter 2 OST" });
 register({ name: "Berdly", filename: "berdly_theme", album: "DELTARUNE Chapter 2 OST" });
+register({
+	name: "Berdly (Rejected Concept)",
+	filename: "berdlyrejected",
+	album: "DELTARUNE Chapter 2 OST",
+	matches(input, normalized) {
+		return includesNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("rejected");
+	},
+});
 register({ name: "BIG SHOT", filename: "spamton_neo_mix_ex_wip", album: "DELTARUNE Chapter 2 OST" });
 register({ name: "Bluebird of Misfortune", filename: "berdly_flashback", album: "DELTARUNE Chapter 2 OST" });
 register({ name: "Chill Jailbreak Alarm To Study And Relax To", filename: "napsta_alarm", album: "DELTARUNE Chapter 2 OST" });
@@ -227,6 +235,7 @@ register({ name: "Paradise, Paradise", filename: "tenna_island", album: "DELTARU
 register({ name: "Physical Challenge", filename: "minigame_kart", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "Piano that may not be played that well", filename: "kris_piano_lower", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "Pushing Buddies", filename: "tvromance", album: "DELTARUNE Chapters 3+4 OST" });
+register({ name: "Query?", filename: "query", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "Quiz!", filename: "TV_GAME", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "Raft Ride", filename: "ch3_board2", album: "DELTARUNE Chapters 3+4 OST" });
 register({ name: "Raise Up Your Bat", filename: "ch3_karaoke_full", album: "DELTARUNE Chapters 3+4 OST" });

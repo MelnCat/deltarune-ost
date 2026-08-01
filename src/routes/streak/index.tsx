@@ -13,8 +13,7 @@ import { useLocalStorage } from "usehooks-ts";
 import glowingSnow from "@/assets/music/tv_results_screen.ogg";
 import { AnimatePresence, motion } from "motion/react";
 import { QuitButton } from "#/components/QuitButton";
-import styles from "./index.module.css";
-
+import styles from "./index.module.css";    
 const glowingSnowPath = [glowingSnow];
 
 export const Route = createFileRoute("/streak/")({
