@@ -17,3 +17,7 @@ export interface GauntletResult {
 export const useGauntletResults = () => {
 	return useLocalStorage<GauntletResult[] | null>("gauntletResults", null);
 };
+
+export const useHighScore = (key: string) => {
+	return useLocalStorage(`${key}HighScore`, 0);
+};

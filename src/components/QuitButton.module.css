@@ -1,5 +1,17 @@
 .quit {
-    position: fixed;
-    top: 0.5em;
-    right: 0.5em;
+	position: fixed;
+	top: 0.5em;
+	right: 0.5em;
+}
+
+@media (width < 600px) {
+	.quit {
+		top: unset;
+		left: 0.25em;
+		right: unset;
+		bottom: 0.25em;
+		.extraBottomSpace {
+			bottom: 3.5em;
+		}
+	}
 }

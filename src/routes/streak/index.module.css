@@ -1,7 +1,6 @@
 @import url("../trivia-shared.module.css");
 
 .streakHeader {
-	padding-bottom: 0.25em;
 	p {
 		color: #ffffff;
 		height: 1em;
@@ -31,4 +30,11 @@
 
 .new {
     color: #ffff00;
+}
+
+@media (width < 770px) {
+    .highScore {
+        top: unset;
+        bottom: 0.25em;
+    }
 }

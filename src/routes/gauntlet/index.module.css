@@ -1,17 +1,19 @@
 @import url("../trivia-shared.module.css");
 
-.header {
-	padding-bottom: 0.2em;
-}
-
 .resetButton {
 	position: fixed;
 	bottom: 0.5em;
 	left: 0.5em;
 }
 p.correct {
-    color: #00ff00;
+	color: #00ff00;
 }
 .gray {
-    color: #888888;
+	color: #888888;
+}
+
+@media (width < 460px) {
+    .gauntletHeader {
+        font-size: 0.75em;
+    }
 }

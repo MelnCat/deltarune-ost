@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GauntletIndexRouteImport } from './routes/gauntlet/index'
 import { Route as StreakIndexRouteImport } from './routes/streak/index'
+import { Route as TimedIndexRouteImport } from './routes/timed/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const StreakIndexRoute = StreakIndexRouteImport.update({
   path: '/streak/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TimedIndexRoute = TimedIndexRouteImport.update({
+  id: '/timed/',
+  path: '/timed/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/gauntlet/': typeof GauntletIndexRoute
   '/streak/': typeof StreakIndexRoute
+  '/timed/': typeof TimedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/gauntlet': typeof GauntletIndexRoute
   '/streak': typeof StreakIndexRoute
+  '/timed': typeof TimedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/gauntlet/': typeof GauntletIndexRoute
   '/streak/': typeof StreakIndexRoute
+  '/timed/': typeof TimedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/gauntlet/' | '/streak/'
+  fullPaths: '/' | '/gauntlet/' | '/streak/' | '/timed/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/gauntlet' | '/streak'
-  id: '__root__' | '/' | '/gauntlet/' | '/streak/'
+  to: '/' | '/gauntlet' | '/streak' | '/timed'
+  id: '__root__' | '/' | '/gauntlet/' | '/streak/' | '/timed/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GauntletIndexRoute: typeof GauntletIndexRoute
   StreakIndexRoute: typeof StreakIndexRoute
+  TimedIndexRoute: typeof TimedIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StreakIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/timed/': {
+      id: '/timed/'
+      path: '/timed'
+      fullPath: '/timed/'
+      preLoaderRoute: typeof TimedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GauntletIndexRoute: GauntletIndexRoute,
   StreakIndexRoute: StreakIndexRoute,
+  TimedIndexRoute: TimedIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

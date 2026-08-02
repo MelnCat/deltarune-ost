@@ -1,10 +1,8 @@
-import { useEffect, useRef } from "react";
-import { useEventListener, useInterval } from "usehooks-ts";
-import styles from "./Background.module.css";
 import battle from "@/assets/img/background/battle.png";
+import cardCastle from "@/assets/img/background/card_castle.png";
 import snow from "@/assets/img/background/snow.png";
 import snowy from "@/assets/img/background/snowy.png";
-import cardCastle from "@/assets/img/background/card_castle.png";
+import styles from "./Background.module.css";
 
 import { match } from "ts-pattern";
 

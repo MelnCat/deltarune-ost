@@ -251,7 +251,7 @@ https://deltaruneost.crab.trade/gauntlet`;
 		.exhaustive();
 	return (
 		<div className={styles.content}>
-			<header className={styles.header}>
+			<header className={`${styles.header} ${styles.gauntletHeader}`}>
 				<h1>Full OST Gauntlet</h1>
 				<p>
 					Completed: {results?.length ?? 0}/{queue?.length ?? 0}

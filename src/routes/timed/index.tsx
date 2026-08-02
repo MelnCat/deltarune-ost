@@ -1,23 +1,24 @@
 import { AudioVisualizer } from "#/components/AudioVisualizer";
 import { Background, type BackgroundType } from "#/components/Background";
 import { Button } from "#/components/Button";
-import { QuitButton } from "#/components/QuitButton";
 import { VolumeSlider } from "#/components/VolumeSlider";
 import { Track, tracks } from "#/data/ost";
 import { preloadAudio, useAudio } from "#/util/audio";
 import { normalizeText } from "#/util/text";
-import { shuffle, useHighScore } from "#/util/util";
-import glowingSnow from "@/assets/music/tv_results_screen.ogg";
 import NumberFlow from "@number-flow/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { match } from "ts-pattern";
-import { useLocalStorage } from "usehooks-ts";
+import { useInterval, useLocalStorage } from "usehooks-ts";
+import glowingSnow from "@/assets/music/tv_results_screen.ogg";
+import { AnimatePresence, motion } from "motion/react";
+import { QuitButton } from "#/components/QuitButton";
 import styles from "./index.module.css";
+import prettyMs from "pretty-ms";
+import { shuffle, useHighScore } from "#/util/util";
 const glowingSnowPath = [glowingSnow];
 
-export const Route = createFileRoute("/streak/")({
+export const Route = createFileRoute("/timed/")({
 	component: RouteComponent,
 });
 
@@ -32,11 +33,11 @@ function RouteComponent() {
 	const [loadState, setLoadState] = useState<LoadState>("none");
 	const [guess, setGuess] = useState("");
 	const [wrong, setWrong] = useState<string[]>([]);
-	const [streak, setStreak] = useState(0);
-	const [losingTrack, setLosingTrack] = useState<Track | null>(null);
+	const [score, setScore] = useState(0);
 	const [background, setBackground] = useState<BackgroundType>("battle");
 	const inputRef = useRef<HTMLInputElement | null>(null);
-	const [highScore, setHighScore] = useHighScore("streak");
+	const [highScore, setHighScore] = useHighScore("timed");
+	const [timeLeft, setTimeLeft] = useState(30000);
 	const pool = useRef<Track[] | null>(null);
 
 	const audioLoadChange = useCallback((loading: boolean) => {
@@ -53,8 +54,8 @@ function RouteComponent() {
 	});
 
 	const giveUp = () => {
-		setLosingTrack(track);
 		setLoadState("give_up");
+		setTimeLeft(timeLeft - 1000);
 	};
 	const goToResults = () => {
 		setLoadState("results");
@@ -81,7 +82,8 @@ function RouteComponent() {
 	};
 	const playAgain = () => {
 		setWrong([]);
-		setStreak(0);
+		setScore(0);
+		setTimeLeft(30000);
 		randomize();
 	};
 	useEffect(() => {
@@ -95,14 +97,23 @@ function RouteComponent() {
 		}
 	}, [nextTrack]);
 
+	useInterval(() => {
+		if (timeLeft <= 0) {
+			goToResults();
+		} else if (loadState !== "loading" && loadState !== "none") {
+			setTimeLeft(Math.max(0, timeLeft - 50));
+		}
+	}, 50);
+
 	const submit: React.SubmitEventHandler<HTMLFormElement> = e => {
 		e.preventDefault();
 		if (!track) return;
 		if (!guess.trim()) return;
 		if (track.matches(guess, normalizeText(guess))) {
 			setLoadState("correct");
-			setStreak(streak + 1);
-			if (streak + 1 > highScore) setHighScore(streak + 1);
+			setScore(score + 1);
+			if (score + 1 > highScore) setHighScore(score + 1);
+			setTimeLeft(Math.min(30000, timeLeft + 5000));
 		} else {
 			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
@@ -118,9 +129,8 @@ function RouteComponent() {
 		.with("results", () => (
 			<div className={styles.results}>
 				<h1>Results</h1>
-				<p>Final Streak: {streak}</p>
-				<p>Lost to: {losingTrack?.name ?? "?"}</p>
-				{streak === highScore ? <p className={styles.new}>New high score!</p> : null}
+				<p>Final Score: {score}</p>
+				{score === highScore ? <p className={styles.new}>New high score!</p> : null}
 				<div className={styles.buttonRow}>
 					<Button autoFocus onClick={playAgain}>
 						Play Again
@@ -174,15 +184,9 @@ function RouteComponent() {
 					{loadState !== "done" && (
 						<>
 							<p>Answer: {track?.name}</p>
-							{loadState === "give_up" ? (
-								<Button type="button" onClick={goToResults} autoFocus>
-									Go to Results
-								</Button>
-							) : loadState === "correct" ? (
-								<Button type="button" onClick={randomize} autoFocus>
-									Next
-								</Button>
-							) : null}
+							<Button type="button" onClick={randomize} autoFocus>
+								Next
+							</Button>
 						</>
 					)}
 				</form>
@@ -191,14 +195,20 @@ function RouteComponent() {
 		.exhaustive();
 	return (
 		<div className={styles.content}>
-			<header className={`${styles.header} ${styles.streakHeader}`}>
-				<h1>Streak</h1>
-				<p data-new={highScore === streak || null}>
-					Current Streak: <NumberFlow value={streak} />
+			<header className={`${styles.header}`}>
+				<h1>Timed</h1>
+				<p>
+					Time Left:{" "}
+					<span className={styles.time}>
+						{timeLeft > 0 ? prettyMs(timeLeft, { keepDecimalsOnWholeSeconds: true, subSecondsAsDecimals: true }) : "Game over!"}
+					</span>
 				</p>
 			</header>
-			<div className={styles.highScore} data-new={highScore === streak || null}>
+			<div className={styles.score}>
 				<p>
+					Score: <NumberFlow value={score} />
+				</p>
+				<p data-new={highScore === score || null}>
 					High Score: <NumberFlow value={highScore} />
 				</p>
 			</div>
@@ -214,12 +224,21 @@ function RouteComponent() {
 			)}
 			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
-			<QuitButton />
+			<QuitButton extraBottomSpace />
 			<AnimatePresence>
 				<motion.div className={styles.backgroundContainer} key={background} exit={{ opacity: 0 }}>
 					<Background type={background} />
 				</motion.div>
 			</AnimatePresence>
+			{loadState !== "results" && (
+				<>
+					<motion.div className={styles.timeOverlay} animate={{ "--t": Math.max(0, timeLeft / 30000) }}></motion.div>
+					<motion.div
+						className={`${styles.timeOverlay} ${styles.color}`}
+						animate={{ "--t": Math.max(0, timeLeft / 30000) }}
+					></motion.div>
+				</>
+			)}
 		</div>
 	);
 }
