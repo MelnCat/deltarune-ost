@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LRUCache } from "lru-cache";
 
 const cacheContext = new AudioContext();
@@ -30,7 +30,16 @@ export const useAudio = ({
 
 	const [analyzer, setAnalyzer] = useState<AnalyserNode | null>(null);
 
-	const playTrack = async (paths: string[]) => {
+	const stop = () => {
+		if (audioCtx.current) {
+			audioCtx.current.close();
+			audioCtx.current = null;
+			gain.current = null;
+			setAnalyzer(null);
+		}
+	};
+
+	const playTrack = useCallback(async (paths: string[]) => {
 		stop();
 		setLoading?.(true);
 		const ctx = (audioCtx.current ??= new AudioContext());
@@ -63,28 +72,24 @@ export const useAudio = ({
 		gain.current.connect(audioCtx.current.destination);
 		setAnalyzer(analyzerNode);
 		setLoading?.(false);
-	};
-	const stop = () => {
-		if (audioCtx.current) {
-			audioCtx.current.close();
-			audioCtx.current = null;
-			gain.current = null;
-			setAnalyzer(null);
-		}
-	};
+	}, [setLoading, volume]);
+    
 	useEffect(() => {
 		return () => {
 			stop();
 		};
 	}, []);
+
 	useEffect(() => {
 		if (!gain.current) return;
 		gain.current.gain.value = volume / 100;
 	}, [volume]);
+
 	useEffect(() => {
 		if (paths) playTrack(paths);
 		else stop();
-	}, [paths]);
+	}, [paths, playTrack]);
+
 	return {
 		stop,
 		analyzer,

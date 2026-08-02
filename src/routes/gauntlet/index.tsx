@@ -6,7 +6,7 @@ import { Track, tracks, tracksByName } from "#/data/ost";
 import { preloadAudio, useAudio } from "#/util/audio";
 import { normalizeText } from "#/util/text";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { match } from "ts-pattern";
 import { useLocalStorage } from "usehooks-ts";
 import glowingSnow from "@/assets/music/tv_results_screen.ogg";
@@ -62,17 +62,19 @@ function RouteComponent() {
 I managed to guess ${results.filter(x => x.correct).length}/${queue.length} (${((results.filter(x => x.correct).length / queue.length) * 100).toFixed(2)}%) of all DELTARUNE songs correctly!
 My most forgotten chapter OST: \`${worstChapter}\`
 https://deltaruneost.crab.trade/gauntlet`;
-	}, [results, queue]);
+	}, [results, queue, worstChapter]);
+
+    const audioLoadChange = useCallback((loading: boolean) => {
+       setLoadState(prev => {
+				if (prev === "correct" || prev === "give_up" || prev === "results") return prev;
+				return loading ? "loading" : "done";
+			});
+    }, []);
 
 	const { analyzer } = useAudio({
 		volume,
 		paths: loadState === "results" ? glowingSnowPath : (track?.paths ?? null),
-		setLoading: loading => {
-			setLoadState(prev => {
-				if (prev === "correct" || prev === "give_up" || prev === "results") return prev;
-				return loading ? "loading" : "done";
-			});
-		},
+		setLoading: audioLoadChange,
 	});
 
 	const share = () => {
@@ -83,6 +85,18 @@ https://deltaruneost.crab.trade/gauntlet`;
 		} else {
 			navigator.clipboard.writeText(shareData);
 			alert("Copied to clipboard!");
+		}
+	};
+
+	const giveUp = (wrong: number) => {
+		setResults(results!.concat({ guesses: wrong, correct: false }));
+		setLoadState("give_up");
+	};
+	const goToResults = () => {
+		setLoadState("results");
+		setBackground("snow");
+		if (endTime === 0) {
+			setEndTime(Date.now());
 		}
 	};
 
@@ -129,15 +143,17 @@ https://deltaruneost.crab.trade/gauntlet`;
 		if (!missing.length) return;
 		const unanswered = queue.slice(results.length);
 		const shuffled = shuffle([...unanswered, ...missing.map(x => x.name)]);
-        setQueue([...queue.slice(0, unanswered.length), ...shuffled])
-	}, [queue, results]);
+		setQueue([...queue.slice(0, results.length), ...shuffled]);
+	}, [queue, results, setQueue]);
 
 	useEffect(() => {
 		if (!results || !queue) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
 			restart();
 		} else {
 			queueNext(results, queue);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const submit: React.SubmitEventHandler<HTMLFormElement> = e => {
@@ -154,17 +170,6 @@ https://deltaruneost.crab.trade/gauntlet`;
 				giveUp(wrong.length + 1);
 			}
 			inputRef.current?.focus();
-		}
-	};
-	const giveUp = (wrong: number) => {
-		setResults(results!.concat({ guesses: wrong, correct: false }));
-		setLoadState("give_up");
-	};
-	const goToResults = () => {
-		setLoadState("results");
-		setBackground("snow");
-		if (endTime === 0) {
-			setEndTime(Date.now());
 		}
 	};
 	const body = match(loadState)

@@ -7,13 +7,13 @@ import { preloadAudio, useAudio } from "#/util/audio";
 import { normalizeText } from "#/util/text";
 import NumberFlow from "@number-flow/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { match } from "ts-pattern";
 import { useLocalStorage } from "usehooks-ts";
 import glowingSnow from "@/assets/music/tv_results_screen.ogg";
 import { AnimatePresence, motion } from "motion/react";
 import { QuitButton } from "#/components/QuitButton";
-import styles from "./index.module.css";    
+import styles from "./index.module.css";
 const glowingSnowPath = [glowingSnow];
 
 export const Route = createFileRoute("/streak/")({
@@ -37,16 +37,27 @@ function RouteComponent() {
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const [highScore, setHighScore] = useLocalStorage("streakHighScore", 0);
 
+	const audioLoadChange = useCallback((loading: boolean) => {
+		setLoadState(prev => {
+			if (prev === "correct" || prev === "give_up" || prev === "results") return prev;
+			return loading ? "loading" : "done";
+		});
+	}, []);
+
 	const { analyzer } = useAudio({
 		volume,
 		paths: loadState === "results" ? glowingSnowPath : (track?.paths ?? null),
-		setLoading: loading => {
-			setLoadState(prev => {
-				if (prev === "correct" || prev === "give_up" || prev === "results") return prev;
-				return loading ? "loading" : "done";
-			});
-		},
+		setLoading: audioLoadChange,
 	});
+
+	const giveUp = () => {
+		setLosingTrack(track);
+		setLoadState("give_up");
+	};
+	const goToResults = () => {
+		setLoadState("results");
+		setBackground("snow");
+	};
 
 	const getRandomTrack = (current: Track | null = null) => {
 		const choices = current === null ? tracks : tracks.filter(x => x !== current);
@@ -68,7 +79,9 @@ function RouteComponent() {
 		randomize();
 	};
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		randomize();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	useEffect(() => {
 		for (const path of nextTrack?.paths ?? []) {
@@ -92,14 +105,6 @@ function RouteComponent() {
 			}
 			inputRef.current?.focus();
 		}
-	};
-	const giveUp = () => {
-		setLosingTrack(track);
-		setLoadState("give_up");
-	};
-	const goToResults = () => {
-		setLoadState("results");
-		setBackground("snow");
 	};
 	const body = match(loadState)
 		.with("none", () => null)
