@@ -64,12 +64,12 @@ My most forgotten chapter OST: \`${worstChapter}\`
 https://deltaruneost.crab.trade/gauntlet`;
 	}, [results, queue, worstChapter]);
 
-    const audioLoadChange = useCallback((loading: boolean) => {
-       setLoadState(prev => {
-				if (prev === "correct" || prev === "give_up" || prev === "results") return prev;
-				return loading ? "loading" : "done";
-			});
-    }, []);
+	const audioLoadChange = useCallback((loading: boolean) => {
+		setLoadState(prev => {
+			if (prev === "correct" || prev === "give_up" || prev === "results") return prev;
+			return loading ? "loading" : "done";
+		});
+	}, []);
 
 	const { analyzer } = useAudio({
 		volume,
@@ -183,7 +183,15 @@ https://deltaruneost.crab.trade/gauntlet`;
 					{((results!.filter(x => x.correct).length / results!.length) * 100).toFixed(2)}%)
 				</p>
 				<p>Average # of Guesses: {+(results!.reduce((l, c) => l + c.guesses, 0) / results!.length).toFixed(2)}</p>
-				<p>Total Wrong Guesses: {+results!.filter(x => (x.correct ? x.guesses - 1 : x.guesses)).length.toFixed(2)}</p>
+				<p>
+					Total Wrong Guesses:{" "}
+					{
+						+results!
+							.map(x => (x.correct ? x.guesses - 1 : x.guesses))
+							.reduce((l, c) => l + c, 0)
+							.toFixed(2)
+					}
+				</p>
 				<p>Total Time Spent: {prettyMs(endTime - startTime)}</p>
 				<p>Most Forgotten OST: {worstChapter}</p>
 				<div className={styles.buttonRow}>
