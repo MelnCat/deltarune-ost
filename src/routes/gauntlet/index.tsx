@@ -1,30 +1,26 @@
 import { AudioVisualizer } from "#/components/AudioVisualizer";
 import { Background, type BackgroundType } from "#/components/Background";
 import { Button } from "#/components/Button";
+import { GuessForm } from "#/components/GuessForm";
+import { QuitButton } from "#/components/QuitButton";
+import { Results } from "#/components/Results";
 import { VolumeSlider } from "#/components/VolumeSlider";
 import { Track, tracks, tracksByName } from "#/data/ost";
 import { preloadAudio, useAudio } from "#/util/audio";
 import { normalizeText } from "#/util/text";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { glowingSnowPath, randomBackgrounds, getVisualizerColor, type LoadState } from "#/util/trivia";
+import { shuffle, useGauntletResults } from "#/util/util";
+import { createFileRoute } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "motion/react";
+import prettyMs from "pretty-ms";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { match } from "ts-pattern";
 import { useLocalStorage } from "usehooks-ts";
-import glowingSnow from "@/assets/music/tv_results_screen.ogg";
-import { AnimatePresence, motion } from "motion/react";
-import { QuitButton } from "#/components/QuitButton";
-import { shuffle, useGauntletResults } from "#/util/util";
-import prettyMs from "pretty-ms";
 import styles from "./index.module.css";
-
-const glowingSnowPath = [glowingSnow];
 
 export const Route = createFileRoute("/gauntlet/")({
 	component: RouteComponent,
 });
-
-type LoadState = "none" | "loading" | "done" | "correct" | "give_up" | "results";
-
-const randomBackgrounds: BackgroundType[] = ["battle"];
 
 function RouteComponent() {
 	const [volume, setVolume] = useLocalStorage("volume", 100);
@@ -88,10 +84,14 @@ https://deltaruneost.crab.trade/gauntlet`;
 		}
 	};
 
-	const giveUp = (wrong: number) => {
-		setResults(results!.concat({ guesses: wrong, correct: false }));
-		setLoadState("give_up");
-	};
+	const giveUp = useCallback(
+		(wrong: number) => {
+			setResults(results!.concat({ guesses: wrong, correct: false }));
+			setLoadState("give_up");
+		},
+		[results, setResults],
+	);
+
 	const goToResults = () => {
 		setLoadState("results");
 		setBackground("snow");
@@ -172,12 +172,20 @@ https://deltaruneost.crab.trade/gauntlet`;
 			inputRef.current?.focus();
 		}
 	};
+
+	const manualGiveUp = useCallback(() => giveUp(wrong.length), [giveUp, wrong.length]);
 	const body = match(loadState)
 		.with("none", () => null)
 		.with("loading", () => <h1>Loading</h1>)
 		.with("results", () => (
-			<div className={styles.results}>
-				<h1>Results</h1>
+			<Results
+				onPlayAgain={promptReset}
+				extraButtons={
+					<Button autoFocus onClick={share}>
+						Share Results
+					</Button>
+				}
+			>
 				<p>
 					Tracks Guessed Correctly: {results!.filter(x => x.correct).length}/{results!.length} (
 					{((results!.filter(x => x.correct).length / results!.length) * 100).toFixed(2)}%)
@@ -194,16 +202,7 @@ https://deltaruneost.crab.trade/gauntlet`;
 				</p>
 				<p>Total Time Spent: {prettyMs(endTime - startTime)}</p>
 				<p>Most Forgotten OST: {worstChapter}</p>
-				<div className={styles.buttonRow}>
-					<Button autoFocus onClick={share}>
-						Share Results
-					</Button>
-					<Button onClick={promptReset}>Play Again</Button>
-					<Link to="/">
-						<Button>Back to Title</Button>
-					</Link>
-				</div>
-			</div>
+			</Results>
 		))
 		.with("done", "correct", "give_up", () => (
 			<>
@@ -212,48 +211,21 @@ https://deltaruneost.crab.trade/gauntlet`;
 					.with("correct", () => <h1 className={styles.correct}>Correct!</h1>)
 					.with("give_up", () => <h1 className={styles.failed}>Better luck next time.</h1>)
 					.otherwise(() => "")}
-				<form className={styles.form} onSubmit={submit}>
-					<div className={styles.inputRow}>
-						<input
-							ref={inputRef}
-							autoFocus
-							placeholder="Song Name"
-							value={guess}
-							onChange={e => setGuess(e.target.value)}
-							disabled={loadState !== "done"}
-						/>
-						<Button type="submit" disabled={loadState !== "done"}>
-							Submit
+				<GuessForm
+					guess={guess}
+					setGuess={setGuess}
+					wrong={wrong}
+					loadState={loadState}
+					track={track}
+					onSubmit={submit}
+					onGiveUp={manualGiveUp}
+					inputRef={inputRef}
+					nextAction={
+						<Button type="button" onClick={() => queueNext(results!, queue!)} autoFocus>
+							Next
 						</Button>
-					</div>
-					<div>
-						<Button type="button" onClick={() => giveUp(wrong.length)} disabled={loadState !== "done"}>
-							Give Up
-						</Button>
-					</div>
-					<div className={styles.xContainer}>
-						{[...Array(3)].map((_, i) => (
-							<div className={styles.x} data-active={i < wrong.length || null} key={i}>
-								{i < wrong.length ? "X" : ""}
-							</div>
-						))}
-					</div>
-					<div className={styles.wrong}>
-						{wrong.map((x, i) => (
-							<div className={styles.wrongText} key={i}>
-								{track && track.messageFor(x, normalizeText(x))}
-							</div>
-						))}
-					</div>
-					{loadState !== "done" && (
-						<>
-							<p>Answer: {track?.name}</p>
-							<Button type="button" onClick={() => queueNext(results!, queue!)} autoFocus>
-								Next
-							</Button>
-						</>
-					)}
-				</form>
+					}
+				/>
 			</>
 		))
 		.exhaustive();
@@ -272,19 +244,10 @@ https://deltaruneost.crab.trade/gauntlet`;
 					</span>
 				</p>
 			</header>
-			{analyzer && (
-				<AudioVisualizer
-					analyzer={analyzer}
-					color={match(loadState)
-						.with("correct", () => "#00ff00")
-						.with("done", () => "#ff00ff")
-						.with("give_up", () => "#ff0000")
-						.otherwise(() => "#ffffff")}
-				/>
-			)}
+			{analyzer && <AudioVisualizer analyzer={analyzer} color={getVisualizerColor(loadState)} />}
 			<div className={styles.container}>{body}</div>
 			<VolumeSlider volume={volume} setVolume={setVolume} />
-			<QuitButton prompt="Quit? Progress WILL be saved." />
+			<QuitButton prompt={"Quit? Progress WILL be saved."} />
 			<Button className={styles.resetButton} onClick={promptReset}>
 				Reset
 			</Button>

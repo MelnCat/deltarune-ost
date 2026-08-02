@@ -1,0 +1,52 @@
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+	align-items: center;
+}
+
+.inputRow {
+	display: flex;
+	gap: 0.25em;
+
+	input {
+		width: 14em;
+	}
+}
+
+.xContainer {
+	display: flex;
+	gap: 1em;
+	margin: 1em 0;
+	justify-content: center;
+}
+
+.x {
+	display: flex;
+	color: #44444488;
+	font-size: 3em;
+	border: 0.1em solid currentColor;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	padding-left: 0.06em;
+	width: 0.82em;
+	height: 1em;
+	padding-bottom: 0.04em;
+
+	&[data-active] {
+		color: #ff0000;
+	}
+}
+
+.wrong {
+	color: #ff0000;
+	display: flex;
+	flex-direction: column;
+	max-width: 100vw;
+	word-wrap: anywhere;
+}
+
+.wrongText {
+	color: inherit;
+}

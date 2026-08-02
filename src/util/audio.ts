@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { LRUCache } from "lru-cache";
 
-const cacheContext = new AudioContext();
+let cacheContext = typeof AudioContext !== "undefined" ? new AudioContext() : null;
 const audioCache = new LRUCache<string, AudioBuffer>({
 	max: 20,
 	ignoreFetchAbort: true,
 	allowStaleOnFetchRejection: true,
 	noDeleteOnFetchRejection: true,
 	async fetchMethod(k) {
+        cacheContext ??= new AudioContext();
 		return cacheContext.decodeAudioData(await (await fetch(k)).arrayBuffer());
 	},
 });

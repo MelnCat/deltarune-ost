@@ -5,15 +5,12 @@
 	bottom: 0.5em;
 	left: 0.5em;
 }
-p.correct {
-	color: #00ff00;
-}
 .gray {
 	color: #888888;
 }
 
 @media (width < 460px) {
-    .gauntletHeader {
-        font-size: 0.75em;
-    }
+	.gauntletHeader {
+		font-size: 0.75em;
+	}
 }
