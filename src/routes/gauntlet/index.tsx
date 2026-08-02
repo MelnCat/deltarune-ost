@@ -59,7 +59,7 @@ function RouteComponent() {
 	const shareData = useMemo(() => {
 		if (!results || !queue) return "";
 		return `\
-I managed to guess ${results.filter(x => x.correct).length}/${queue.length} (${(results.filter(x => x.correct).length/queue.length * 100).toFixed(2)}%) of all DELTARUNE songs correctly!
+I managed to guess ${results.filter(x => x.correct).length}/${queue.length} (${((results.filter(x => x.correct).length / queue.length) * 100).toFixed(2)}%) of all DELTARUNE songs correctly!
 My most forgotten chapter OST: \`${worstChapter}\`
 https://deltaruneost.crab.trade/gauntlet`;
 	}, [results, queue]);
@@ -122,6 +122,15 @@ https://deltaruneost.crab.trade/gauntlet`;
 		}
 		restart();
 	};
+
+	useEffect(() => {
+		if (!queue || !results) return;
+		const missing = tracks.filter(x => !queue.includes(x.name));
+		if (!missing.length) return;
+		const unanswered = queue.slice(results.length);
+		const shuffled = shuffle([...unanswered, ...missing.map(x => x.name)]);
+        setQueue([...queue.slice(0, unanswered.length), ...shuffled])
+	}, [queue, results]);
 
 	useEffect(() => {
 		if (!results || !queue) {

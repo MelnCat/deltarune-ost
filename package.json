@@ -10,7 +10,9 @@
 		"generate-routes": "tsr generate",
 		"build": "vite build",
 		"preview": "vite preview",
-		"start": "node .output/server/index.mjs"
+		"start": "node .output/server/index.mjs",
+		"lint": "eslint .",
+		"fix": "eslint . --fix"
 	},
 	"dependencies": {
 		"@number-flow/react": "^0.6.2",
@@ -29,13 +31,19 @@
 		"usehooks-ts": "^3.1.1"
 	},
 	"devDependencies": {
+		"@eslint/js": "^10.0.1",
 		"@tanstack/devtools-vite": "latest",
 		"@tanstack/router-cli": "^1.132.0",
 		"@types/node": "^22.10.2",
 		"@types/react": "^19.2.0",
 		"@types/react-dom": "^19.2.0",
 		"@vitejs/plugin-react": "^6.0.1",
+		"eslint": "^10.8.0",
+		"eslint-plugin-react-hooks": "^7.1.1",
+		"eslint-plugin-react-refresh": "^0.5.3",
+		"globals": "^17.8.0",
 		"typescript": "^6.0.2",
+		"typescript-eslint": "^8.65.0",
 		"vite": "^8.0.0"
 	},
 	"pnpm": {

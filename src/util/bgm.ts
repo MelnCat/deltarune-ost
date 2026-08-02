@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from "react";
+import { useEffect } from "react";
 
 export const useBgm = (url: string, volume: number = 1) => {
 	useEffect(() => {
@@ -12,5 +12,5 @@ export const useBgm = (url: string, volume: number = 1) => {
 			audio.pause();
 			audio.src = "";
 		};
-	}, [url]);
+	}, [url, volume]);
 };
