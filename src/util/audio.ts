@@ -114,7 +114,8 @@ export const useAudio = ({
 };
 
 const getRandomClipTime = (buffer: AudioBuffer) => {
-    return Math.random() * (buffer.length / buffer.sampleRate - 5)
+    if (buffer.duration <= 5) return 0;
+    return Math.random() * (buffer.duration - 5)
 }
 
 const clipAudio = (buffer: AudioBuffer, start: number, duration: number) => {
