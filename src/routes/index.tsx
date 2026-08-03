@@ -38,7 +38,7 @@ function App() {
 		.with("gauntlet", () => "Go through every single OST track in a random order, and see how many of them you remember!")
 		.with("timed", () => "Guess as many tracks as possible in 30 seconds! Each correct guess adds an extra 5 seconds.")
 		.with("sample", () => "Try to guess tracks based on 5 second snippets. You lose when you fail to get 3 tracks.")
-		.with("dual", () => ".")
+		.with("dual", () => "Guess two tracks while both are playing at once.")
 		.with("scc", () => "Streak mode but it's all Sweet Cap'n Cakes.")
 		.otherwise(() => "Made by melncat.");
 
