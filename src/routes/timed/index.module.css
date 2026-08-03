@@ -1,8 +1,5 @@
 @import url("../trivia-shared.module.css");
 
-.time {
-}
-
 .timeOverlay {
 	position: fixed;
 	top: 0;

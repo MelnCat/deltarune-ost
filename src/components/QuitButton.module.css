@@ -10,8 +10,8 @@
 		left: 0.25em;
 		right: unset;
 		bottom: 0.25em;
-		.extraBottomSpace {
-			bottom: 3.5em;
-		}
+	}
+	.extraBottomSpace {
+		bottom: 3.5em;
 	}
 }

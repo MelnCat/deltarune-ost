@@ -3,7 +3,7 @@ import styles from "./VolumeSlider.module.css";
 import RangeSliderImport from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
 
-const RangeSlider = ((RangeSliderImport as any).default ?? RangeSliderImport) as typeof RangeSliderImport;
+const RangeSlider = ((RangeSliderImport as unknown as{ default: typeof RangeSliderImport }).default ?? RangeSliderImport) as typeof RangeSliderImport;
 
 export const VolumeSlider = ({ volume, setVolume }: { volume: number; setVolume: (vol: number) => void }) => {
 	return (

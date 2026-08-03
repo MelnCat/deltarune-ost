@@ -36,6 +36,7 @@ function RouteComponent() {
 		},
 		onGiveUp: () => {
 			setTimeLeft(timeLeft - 1000);
+			setScore(score - 1);
 		},
 		onPlayAgain: () => {
 			setScore(0);
@@ -65,7 +66,7 @@ function RouteComponent() {
 				{match(game.loadState)
 					.with("done", () => <h1>Guess the currently playing song.</h1>)
 					.with("correct", () => <h1 className={styles.correct}>Correct!</h1>)
-					.with("give_up", () => <h1 className={styles.failed}>Streak ended.</h1>)
+					.with("give_up", () => <h1 className={styles.failed}>Incorrect.</h1>)
 					.otherwise(() => "")}
 				<GuessForm
 					guess={game.guess}

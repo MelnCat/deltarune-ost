@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useEventListener, useInterval } from "usehooks-ts";
+import { useEventListener } from "usehooks-ts";
 import styles from "./AudioVisualizer.module.css";
 
 const MAX_BRIGHTNESS = 255;

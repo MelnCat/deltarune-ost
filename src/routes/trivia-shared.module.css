@@ -76,16 +76,7 @@
 	color: #ffff00;
 }
 
-.backgroundContainer {
-}
-
 @media screen and (max-width: 624px) {
-	.inputRow {
-		input {
-			width: 10em;
-		}
-	}
-
 	h1 {
 		font-size: 1.5em;
 	}
@@ -96,12 +87,6 @@
 }
 
 @media screen and (max-width: 460px) {
-	.inputRow {
-		input {
-			width: 10em;
-		}
-	}
-
 	h1 {
 		font-size: 1.5em;
 	}
