@@ -23,7 +23,7 @@
 
 .x {
 	display: flex;
-	color: #44444488;
+	color: #888888aa;
 	font-size: 3em;
 	border: 0.1em solid currentColor;
 	text-align: center;
@@ -33,9 +33,17 @@
 	width: 0.82em;
 	height: 1em;
 	padding-bottom: 0.04em;
+    opacity: 1;
+	transition:
+		color 0.25s,
+		opacity 1s;
 
 	&[data-active] {
 		color: #ff0000;
+	}
+
+	&[data-disabled] {
+		opacity: 0;
 	}
 }
 

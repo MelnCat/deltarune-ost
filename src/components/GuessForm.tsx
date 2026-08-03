@@ -4,6 +4,7 @@ import { normalizeText } from "#/util/text";
 import type { LoadState } from "#/util/trivia";
 import type { ReactNode } from "react";
 import styles from "./GuessForm.module.css";
+import { AnimatePresence, motion } from "motion/react";
 
 export const GuessForm = ({
 	guess,
@@ -14,6 +15,8 @@ export const GuessForm = ({
 	onSubmit,
 	onGiveUp,
 	nextAction,
+	maxWrong = 3,
+	enabledWrong = maxWrong,
 	inputRef,
 }: {
 	guess: string;
@@ -24,6 +27,8 @@ export const GuessForm = ({
 	onSubmit: React.SubmitEventHandler<HTMLFormElement>;
 	onGiveUp: () => void;
 	nextAction: ReactNode;
+	maxWrong?: number;
+	enabledWrong?: number;
 	inputRef: React.RefObject<HTMLInputElement | null>;
 }) => {
 	return (
@@ -47,8 +52,13 @@ export const GuessForm = ({
 				</Button>
 			</div>
 			<div className={styles.xContainer}>
-				{[...Array(3)].map((_, i) => (
-					<div className={styles.x} data-active={i < wrong.length || null} key={i}>
+				{[...Array(maxWrong)].map((_, i) => (
+					<div
+						className={styles.x}
+						data-active={i < wrong.length || null}
+						data-disabled={i >= enabledWrong || null}
+						key={i}
+					>
 						{i < wrong.length ? "X" : ""}
 					</div>
 				))}

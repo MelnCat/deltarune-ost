@@ -25,6 +25,7 @@ function App() {
 	const [results] = useGauntletResults();
 	const [streakHighScore] = useHighScore("streak");
 	const [timedHighScore] = useHighScore("timed");
+	const [sampleHighScore] = useHighScore("sample");
 	const [volume, setVolume] = useLocalStorage("volume", 100);
 
 	const audio = useAudio({
@@ -67,6 +68,10 @@ function App() {
 					<MainLink to="/timed" active={hovered === "timed"} onHover={() => setHovered("timed")}>
 						Timed
 						{timedHighScore ? <span className={styles.gray}> (Best: {timedHighScore})</span> : null}
+					</MainLink>
+					<MainLink to="/sample" active={hovered === "sample"} onHover={() => setHovered("sample")}>
+						Sample
+						{sampleHighScore ? <span className={styles.gray}> (Best: {sampleHighScore})</span> : null}
 					</MainLink>
 				</section>
 				<section>

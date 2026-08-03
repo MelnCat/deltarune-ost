@@ -25,10 +25,14 @@ export const useGame = ({
 	onCorrect,
 	onGiveUp,
 	onPlayAgain,
+    maxWrong = 3,
+    enabledWrong = maxWrong
 }: {
 	onCorrect: (guesses: number) => void;
 	onGiveUp: (track: Track | null) => void;
 	onPlayAgain: () => void;
+    maxWrong?: number,
+    enabledWrong?: number
 }) => {
 	const [volume, setVolume] = useLocalStorage("volume", 100);
 	const [track, setTrack] = useState<Track | null>(null);
@@ -108,7 +112,8 @@ export const useGame = ({
 		} else {
 			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
-			if (wrong.length + 1 >= 3) {
+                console.log(enabledWrong)
+			if (wrong.length + 1 >= enabledWrong) {
 				giveUp();
 			}
 			inputRef.current?.focus();
@@ -132,5 +137,7 @@ export const useGame = ({
 		goToResults,
 		giveUp,
 		submit,
+        maxWrong,
+        enabledWrong
 	};
 };
