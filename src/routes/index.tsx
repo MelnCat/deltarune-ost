@@ -26,6 +26,7 @@ function App() {
 	const [streakHighScore] = useHighScore("streak");
 	const [timedHighScore] = useHighScore("timed");
 	const [sampleHighScore] = useHighScore("sample");
+	const [dualHighScore] = useHighScore("dual");
 	const [volume, setVolume] = useLocalStorage("volume", 100);
 
 	const audio = useAudio({
@@ -77,6 +78,7 @@ function App() {
 					</MainLink>
 					<MainLink to="/dual" active={hovered === "dual"} onHover={() => setHovered("dual")}>
 						Dual
+						{dualHighScore ? <span className={styles.gray}> (Best: {dualHighScore})</span> : null}
 					</MainLink>
 					<MainLink to="/scc" active={hovered === "scc"} onHover={() => setHovered("scc")}>
 						Sweet Cap'n Cakes
