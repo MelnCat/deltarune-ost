@@ -86,6 +86,7 @@ function RouteComponent() {
 		setGuess("");
 		setWrong([]);
 		setBackground(randomBackgrounds[Math.floor(Math.random() * randomBackgrounds.length)]);
+		setCorrect([]);
 	};
 
 	const playAgain = () => {
