@@ -1,0 +1,14 @@
+@import url("../trivia-shared.module.css");
+
+.streakHeader {
+	p {
+		color: #ffffff;
+		height: 1em;
+		display: flex;
+		align-items: center;
+		gap: 0.25em;
+		&[data-new] {
+			color: #ffff00;
+		}
+	}
+}

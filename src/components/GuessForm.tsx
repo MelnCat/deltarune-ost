@@ -10,6 +10,7 @@ export const GuessForm = ({
 	guess,
 	setGuess,
 	wrong,
+    extraText,
 	loadState,
 	track,
 	onSubmit,
@@ -22,8 +23,9 @@ export const GuessForm = ({
 	guess: string;
 	setGuess: (value: string) => void;
 	wrong: string[];
+    extraText?: ReactNode,
 	loadState: LoadState;
-	track: Track | null;
+	track: Track | Track[] | null;
 	onSubmit: React.SubmitEventHandler<HTMLFormElement>;
 	onGiveUp: () => void;
 	nextAction: ReactNode;
@@ -64,15 +66,16 @@ export const GuessForm = ({
 				))}
 			</div>
 			<div className={styles.wrong}>
+                {extraText}
 				{wrong.map((x, i) => (
 					<div className={styles.wrongText} key={i}>
-						{track && track.messageFor(x, normalizeText(x))}
+						{track && (Array.isArray(track) ? track[0] : track).messageFor(x, normalizeText(x))}
 					</div>
 				))}
 			</div>
 			{loadState !== "done" && (
 				<>
-					<p>Answer: {track?.name}</p>
+					<p>Answer: {Array.isArray(track) ? track.map(x => x.name).join(", ") : track?.name}</p>
 					{nextAction}
 				</>
 			)}

@@ -24,7 +24,7 @@ export const useAudio = ({
 	samples = false,
 }: {
 	volume: number;
-	paths: string[] | null;
+	paths: string[] | string[][] | null;
 	setLoading?: (loading: boolean) => void;
 	samples?: boolean;
 }) => {
@@ -43,40 +43,46 @@ export const useAudio = ({
 		}
 	};
 
-	const playTrack = async (paths: string[]) => {
+	const playTrack = async (paths: string[][]) => {
 		stop();
 		setLoading?.(true);
 		const ctx = (audioCtx.current ??= new AudioContext());
 		const analyzerNode = ctx.createAnalyser();
 		analyzerNode.fftSize = 2048;
-		const buffers = await Promise.all(
-			paths.map(async x => {
-				const cached = await audioCache.forceFetch(x);
-				return cached;
+		const bufferLists = await Promise.all(
+			paths.map(async y => {
+				return await Promise.all(
+					y.map(async x => {
+						const cached = await audioCache.forceFetch(x);
+						return cached;
+					}),
+				);
 			}),
 		);
 		if (audioCtx.current !== ctx) {
 			if (ctx.state !== "closed") ctx.close();
 			return;
 		}
-		let currentTime = 0;
-		if (samples) {
-			const clip = getRandomClipTime(buffers.at(-1)!);
-			const source = audioCtx.current.createBufferSource();
-			source.buffer = clipAudio(buffers.at(-1)!, clip, 5);
-			source.connect(analyzerNode);
-			source.start(currentTime);
-			source.loop = true;
-		} else {
-			for (const buffer of buffers) {
+		for (const buffers of bufferLists) {
+			let currentTime = 0;
+			if (samples) {
+				const clip = getRandomClipTime(buffers.at(-1)!);
 				const source = audioCtx.current.createBufferSource();
-				source.buffer = buffer;
+				source.buffer = clipAudio(buffers.at(-1)!, clip, 5);
 				source.connect(analyzerNode);
 				source.start(currentTime);
-				if (buffer === buffers.at(-1)) {
-					source.loop = true;
+				source.loop = true;
+			} else {
+				for (const buffer of buffers) {
+					const source = audioCtx.current.createBufferSource();
+					source.buffer = buffer;
+					source.connect(analyzerNode);
+					source.start(currentTime);
+					if (buffer === buffers.at(-1)) {
+						source.loop = true;
+					}
+					currentTime += buffer.duration;
 				}
-				currentTime += buffer.duration;
 			}
 		}
 		gain.current = ctx.createGain();
@@ -100,7 +106,7 @@ export const useAudio = ({
 	}, [volume]);
 
 	useEffect(() => {
-		if (paths) playTrack(paths);
+		if (paths) playTrack((paths.length && typeof paths[0] === "string" ? [paths] : paths) as string[][]);
 		else stop();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [paths]);
@@ -114,9 +120,9 @@ export const useAudio = ({
 };
 
 const getRandomClipTime = (buffer: AudioBuffer) => {
-    if (buffer.duration <= 5) return 0;
-    return Math.random() * (buffer.duration - 5)
-}
+	if (buffer.duration <= 5) return 0;
+	return Math.random() * (buffer.duration - 5);
+};
 
 const clipAudio = (buffer: AudioBuffer, start: number, duration: number) => {
 	const startSample = Math.floor(start * buffer.sampleRate);

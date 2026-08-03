@@ -38,6 +38,8 @@ function App() {
 		.with("gauntlet", () => "Go through every single OST track in a random order, and see how many of them you remember!")
 		.with("timed", () => "Guess as many tracks as possible in 30 seconds! Each correct guess adds an extra 5 seconds.")
 		.with("sample", () => "Try to guess tracks based on 5 second snippets. You lose when you fail to get 3 tracks.")
+		.with("dual", () => ".")
+		.with("scc", () => "Streak mode but it's all Sweet Cap'n Cakes.")
 		.otherwise(() => "Made by melncat.");
 
 	return (
@@ -72,6 +74,12 @@ function App() {
 					<MainLink to="/sample" active={hovered === "sample"} onHover={() => setHovered("sample")}>
 						Sample
 						{sampleHighScore ? <span className={styles.gray}> (Best: {sampleHighScore})</span> : null}
+					</MainLink>
+					<MainLink to="/dual" active={hovered === "dual"} onHover={() => setHovered("dual")}>
+						Dual
+					</MainLink>
+					<MainLink to="/scc" active={hovered === "scc"} onHover={() => setHovered("scc")}>
+						Sweet Cap'n Cakes
 					</MainLink>
 				</section>
 				<section>

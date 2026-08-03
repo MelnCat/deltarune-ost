@@ -28,6 +28,8 @@ export const useGame = ({
 	maxWrong = 3,
 	enabledWrong = maxWrong,
 	samples = false,
+	populatePool = () => shuffle(tracks),
+	shouldRepopulatePool = pool => pool.length < 10,
 }: {
 	onCorrect: (guesses: number) => void;
 	onGiveUp: (track: Track | null) => void;
@@ -35,6 +37,8 @@ export const useGame = ({
 	maxWrong?: number;
 	enabledWrong?: number;
 	samples?: boolean;
+	populatePool?: () => Track[];
+	shouldRepopulatePool?: (pool: Track[]) => boolean;
 }) => {
 	const [volume, setVolume] = useLocalStorage("volume", 100);
 	const [track, setTrack] = useState<Track | null>(null);
@@ -47,11 +51,11 @@ export const useGame = ({
 
 	const pool = useRef<Track[] | null>(null);
 	const getRandomTrack = useCallback(() => {
-		if (!pool.current || pool.current.length <= 10) {
-			pool.current = shuffle(tracks);
+		if (!pool.current || shouldRepopulatePool(pool.current)) {
+			pool.current = populatePool().slice(0);
 		}
 		return pool.current.pop() ?? tracks[Math.floor(Math.random() * tracks.length)];
-	}, []);
+	}, [populatePool, shouldRepopulatePool]);
 
 	const audioLoadChange = useCallback((loading: boolean) => {
 		setLoadState(prev => {
@@ -115,7 +119,6 @@ export const useGame = ({
 		} else {
 			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
-			console.log(enabledWrong);
 			if (wrong.length + 1 >= enabledWrong) {
 				giveUp();
 			}

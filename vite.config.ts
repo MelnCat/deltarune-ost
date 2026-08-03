@@ -34,7 +34,7 @@ const serveExtraFlac: () => PluginOption = () => ({
 const config = defineConfig({
 	resolve: { tsconfigPaths: true },
 	plugins: [devtools(), serveExtraFlac(), nitro({ rollupConfig: { external: [/^@sentry\//] } }), tanstackStart(), viteReact()],
-	assetsInclude: ["**/*.flac"],
+	assetsInclude: ["**/*.flac"]
 });
 
 export default config;

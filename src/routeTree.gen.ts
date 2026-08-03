@@ -10,14 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DualIndexRouteImport } from './routes/dual/index'
 import { Route as GauntletIndexRouteImport } from './routes/gauntlet/index'
 import { Route as SampleIndexRouteImport } from './routes/sample/index'
+import { Route as SccIndexRouteImport } from './routes/scc/index'
 import { Route as StreakIndexRouteImport } from './routes/streak/index'
 import { Route as TimedIndexRouteImport } from './routes/timed/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DualIndexRoute = DualIndexRouteImport.update({
+  id: '/dual/',
+  path: '/dual/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GauntletIndexRoute = GauntletIndexRouteImport.update({
@@ -28,6 +35,11 @@ const GauntletIndexRoute = GauntletIndexRouteImport.update({
 const SampleIndexRoute = SampleIndexRouteImport.update({
   id: '/sample/',
   path: '/sample/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SccIndexRoute = SccIndexRouteImport.update({
+  id: '/scc/',
+  path: '/scc/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StreakIndexRoute = StreakIndexRouteImport.update({
@@ -43,38 +55,61 @@ const TimedIndexRoute = TimedIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dual/': typeof DualIndexRoute
   '/gauntlet/': typeof GauntletIndexRoute
   '/sample/': typeof SampleIndexRoute
+  '/scc/': typeof SccIndexRoute
   '/streak/': typeof StreakIndexRoute
   '/timed/': typeof TimedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dual': typeof DualIndexRoute
   '/gauntlet': typeof GauntletIndexRoute
   '/sample': typeof SampleIndexRoute
+  '/scc': typeof SccIndexRoute
   '/streak': typeof StreakIndexRoute
   '/timed': typeof TimedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dual/': typeof DualIndexRoute
   '/gauntlet/': typeof GauntletIndexRoute
   '/sample/': typeof SampleIndexRoute
+  '/scc/': typeof SccIndexRoute
   '/streak/': typeof StreakIndexRoute
   '/timed/': typeof TimedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/gauntlet/' | '/sample/' | '/streak/' | '/timed/'
+  fullPaths:
+    | '/'
+    | '/dual/'
+    | '/gauntlet/'
+    | '/sample/'
+    | '/scc/'
+    | '/streak/'
+    | '/timed/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/gauntlet' | '/sample' | '/streak' | '/timed'
-  id: '__root__' | '/' | '/gauntlet/' | '/sample/' | '/streak/' | '/timed/'
+  to: '/' | '/dual' | '/gauntlet' | '/sample' | '/scc' | '/streak' | '/timed'
+  id:
+    | '__root__'
+    | '/'
+    | '/dual/'
+    | '/gauntlet/'
+    | '/sample/'
+    | '/scc/'
+    | '/streak/'
+    | '/timed/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DualIndexRoute: typeof DualIndexRoute
   GauntletIndexRoute: typeof GauntletIndexRoute
   SampleIndexRoute: typeof SampleIndexRoute
+  SccIndexRoute: typeof SccIndexRoute
   StreakIndexRoute: typeof StreakIndexRoute
   TimedIndexRoute: typeof TimedIndexRoute
 }
@@ -86,6 +121,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dual/': {
+      id: '/dual/'
+      path: '/dual'
+      fullPath: '/dual/'
+      preLoaderRoute: typeof DualIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gauntlet/': {
@@ -100,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/sample'
       fullPath: '/sample/'
       preLoaderRoute: typeof SampleIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scc/': {
+      id: '/scc/'
+      path: '/scc'
+      fullPath: '/scc/'
+      preLoaderRoute: typeof SccIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/streak/': {
@@ -121,8 +170,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DualIndexRoute: DualIndexRoute,
   GauntletIndexRoute: GauntletIndexRoute,
   SampleIndexRoute: SampleIndexRoute,
+  SccIndexRoute: SccIndexRoute,
   StreakIndexRoute: StreakIndexRoute,
   TimedIndexRoute: TimedIndexRoute,
 }
