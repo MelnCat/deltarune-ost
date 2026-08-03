@@ -1,6 +1,6 @@
 @import url("../trivia-shared.module.css");
 
-.streakHeader {
+.sampleHeader {
 	p {
 		color: #ffffff;
 		height: 1em;
@@ -11,4 +11,14 @@
 			color: #ffff00;
 		}
 	}
+}
+
+.timeLine {
+    position: fixed;
+    height: 100vh;
+    pointer-events: none;
+    width: 1px;
+    background-color: #ffffffee;
+    left: calc(var(--t) * 100vw);
+    z-index: -1;
 }

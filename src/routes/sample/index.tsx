@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { match } from "ts-pattern";
 import styles from "./index.module.css";
+import { useInterval } from "usehooks-ts";
 
 export const Route = createFileRoute("/sample/")({
 	component: RouteComponent,
@@ -24,6 +25,7 @@ function RouteComponent() {
 	const [score, setScore] = useState(0);
 	const [highScore, setHighScore] = useHighScore("sample");
 	const [failed, setFailed] = useState(0);
+	const [time, setTime] = useState(0);
 
 	const game = useGame({
 		onCorrect: guesses => {
@@ -38,8 +40,12 @@ function RouteComponent() {
 			setFailed(0);
 		},
 		enabledWrong: 3 - failed,
+		samples: true,
 	});
 
+	useInterval(() => {
+		setTime((game.audioCtx.current?.currentTime ?? 0) - game.audioStartTime);
+	}, 10);
 	const body = match(game.loadState)
 		.with("none", () => null)
 		.with("loading", () => <h1>Loading</h1>)
@@ -75,7 +81,7 @@ function RouteComponent() {
 							<Button type="button" onClick={game.randomize} autoFocus>
 								Next
 							</Button>
-						) 
+						)
 					}
 				/>
 			</>
@@ -84,7 +90,7 @@ function RouteComponent() {
 
 	return (
 		<div className={styles.content}>
-			<header className={`${styles.header} ${styles.streakHeader}`}>
+			<header className={`${styles.header} ${styles.sampleHeader}`}>
 				<h1>Sample</h1>
 				<p data-new={highScore === score || null}>
 					Current Score: <NumberFlow value={score} />
@@ -97,6 +103,12 @@ function RouteComponent() {
 			</ScoreBox>
 			{game.analyzer && <AudioVisualizer analyzer={game.analyzer} color={getVisualizerColor(game.loadState)} />}
 			<div className={styles.container}>{body}</div>
+			{game.loadState !== "loading" && game.loadState !== "results" && (
+				<div className={styles.timeLine} style={{ "--t": (time % 5) / 5 }}>
+					<div className={`${styles.end} ${styles.top}`} />
+					<div className={`${styles.end} ${styles.bottom}`} />
+				</div>
+			)}
 			<VolumeSlider volume={game.volume} setVolume={game.setVolume} />
 			<QuitButton prompt={"Quit? Your progress will not be saved."} />
 			<AnimatePresence>

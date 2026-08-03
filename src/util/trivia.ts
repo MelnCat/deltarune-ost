@@ -25,14 +25,16 @@ export const useGame = ({
 	onCorrect,
 	onGiveUp,
 	onPlayAgain,
-    maxWrong = 3,
-    enabledWrong = maxWrong
+	maxWrong = 3,
+	enabledWrong = maxWrong,
+	samples = false,
 }: {
 	onCorrect: (guesses: number) => void;
 	onGiveUp: (track: Track | null) => void;
 	onPlayAgain: () => void;
-    maxWrong?: number,
-    enabledWrong?: number
+	maxWrong?: number;
+	enabledWrong?: number;
+	samples?: boolean;
 }) => {
 	const [volume, setVolume] = useLocalStorage("volume", 100);
 	const [track, setTrack] = useState<Track | null>(null);
@@ -58,10 +60,11 @@ export const useGame = ({
 		});
 	}, []);
 
-	const { analyzer } = useAudio({
+	const { analyzer, audioCtx, startTime } = useAudio({
 		volume,
 		paths: loadState === "results" ? glowingSnowPath : (track?.paths ?? null),
 		setLoading: audioLoadChange,
+		samples: loadState !== "results" && samples,
 	});
 
 	const goToResults = () => {
@@ -112,7 +115,7 @@ export const useGame = ({
 		} else {
 			setWrong(x => x.concat(guess.trim()));
 			setGuess("");
-                console.log(enabledWrong)
+			console.log(enabledWrong);
 			if (wrong.length + 1 >= enabledWrong) {
 				giveUp();
 			}
@@ -137,7 +140,9 @@ export const useGame = ({
 		goToResults,
 		giveUp,
 		submit,
-        maxWrong,
-        enabledWrong
+		maxWrong,
+		enabledWrong,
+		audioCtx,
+		audioStartTime: startTime,
 	};
 };

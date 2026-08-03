@@ -8,7 +8,7 @@ const audioCache = new LRUCache<string, AudioBuffer>({
 	allowStaleOnFetchRejection: true,
 	noDeleteOnFetchRejection: true,
 	async fetchMethod(k) {
-        cacheContext ??= new AudioContext();
+		cacheContext ??= new AudioContext();
 		return cacheContext.decodeAudioData(await (await fetch(k)).arrayBuffer());
 	},
 });
@@ -21,15 +21,18 @@ export const useAudio = ({
 	volume,
 	paths,
 	setLoading,
+	samples = false,
 }: {
 	volume: number;
 	paths: string[] | null;
 	setLoading?: (loading: boolean) => void;
+	samples?: boolean;
 }) => {
 	const audioCtx = useRef<AudioContext | null>(null);
 	const gain = useRef<GainNode | null>(null);
 
 	const [analyzer, setAnalyzer] = useState<AnalyserNode | null>(null);
+	const [startTime, setStartTime] = useState(0);
 
 	const stop = () => {
 		if (audioCtx.current) {
@@ -57,15 +60,24 @@ export const useAudio = ({
 			return;
 		}
 		let currentTime = 0;
-		for (const buffer of buffers) {
+		if (samples) {
+			const clip = getRandomClipTime(buffers.at(-1)!);
 			const source = audioCtx.current.createBufferSource();
-			source.buffer = buffer;
+			source.buffer = clipAudio(buffers.at(-1)!, clip, 5);
 			source.connect(analyzerNode);
 			source.start(currentTime);
-			if (buffer === buffers.at(-1)) {
-				source.loop = true;
+			source.loop = true;
+		} else {
+			for (const buffer of buffers) {
+				const source = audioCtx.current.createBufferSource();
+				source.buffer = buffer;
+				source.connect(analyzerNode);
+				source.start(currentTime);
+				if (buffer === buffers.at(-1)) {
+					source.loop = true;
+				}
+				currentTime += buffer.duration;
 			}
-			currentTime += buffer.duration;
 		}
 		gain.current = ctx.createGain();
 		gain.current.gain.value = volume / 100;
@@ -73,6 +85,7 @@ export const useAudio = ({
 		gain.current.connect(audioCtx.current.destination);
 		setAnalyzer(analyzerNode);
 		setLoading?.(false);
+		setStartTime(ctx.currentTime);
 	};
 
 	useEffect(() => {
@@ -95,5 +108,26 @@ export const useAudio = ({
 	return {
 		stop,
 		analyzer,
+		audioCtx,
+		startTime,
 	};
+};
+
+const getRandomClipTime = (buffer: AudioBuffer) => {
+    return Math.random() * (buffer.length / buffer.sampleRate - 5)
+}
+
+const clipAudio = (buffer: AudioBuffer, start: number, duration: number) => {
+	const startSample = Math.floor(start * buffer.sampleRate);
+	const frameCount = Math.floor(duration * buffer.sampleRate);
+	const clip = new AudioBuffer({
+		length: frameCount,
+		numberOfChannels: buffer.numberOfChannels,
+		sampleRate: buffer.sampleRate,
+	});
+	for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+		const src = buffer.getChannelData(channel).subarray(startSample, startSample + frameCount);
+		clip.copyToChannel(src, channel);
+	}
+	return clip;
 };
