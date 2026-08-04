@@ -109,7 +109,7 @@ function RouteComponent() {
 			</ScoreBox>
 			{game.analyzer && <AudioVisualizer analyzer={game.analyzer} color={getVisualizerColor(game.loadState)} />}
 			<VolumeSlider volume={game.volume} setVolume={game.setVolume} />
-			<QuitButton prompt={"Quit? Progress will not be saved."} extraBottomSpace={true} />
+			<QuitButton prompt={"Quit? Progress will not be saved."} extraBottomSpace={"extra"} />
 			<AnimatePresence>
 				<motion.div className={styles.backgroundContainer} key={game.background} exit={{ opacity: 0 }}>
 					<Background type={game.background} />
