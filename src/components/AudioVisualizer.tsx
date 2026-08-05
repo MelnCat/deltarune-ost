@@ -25,7 +25,7 @@ export const AudioVisualizer = ({ analyzer, color }: { analyzer: AnalyserNode; c
 	};
 	useEffect(() => {
 		resizeCanvas();
-	});
+	}, []);
 	useEventListener("resize", resizeCanvas);
 	useEffect(() => {
 		let frame = 0;

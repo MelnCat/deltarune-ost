@@ -36,7 +36,7 @@ function RouteComponent() {
 		},
 		onGiveUp: () => {
 			setTimeLeft(timeLeft - 1000);
-			setScore(score - 1);
+			setScore(Math.max(0, score - 1));
 		},
 		onPlayAgain: () => {
 			setScore(0);
@@ -46,7 +46,9 @@ function RouteComponent() {
 
 	useInterval(() => {
 		if (timeLeft <= 0) {
-			game.goToResults();
+			if (game.loadState !== "results") {
+                game.goToResults();
+            }
 		} else if (game.loadState !== "loading" && game.loadState !== "none") {
 			setTimeLeft(Math.max(0, timeLeft - 50));
 		}
