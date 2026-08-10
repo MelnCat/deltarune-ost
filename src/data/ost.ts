@@ -120,7 +120,7 @@ register({
 	filename: "berdlyrejected",
 	album: "DELTARUNE Chapter 2 OST",
 	matches(input, normalized) {
-		return includesNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("rejected");
+		return includesNormalized(normalized, this.name) && input.toLowerCase().includes("rejected");
 	},
 });
 register({ name: "BIG SHOT", filename: "spamton_neo_mix_ex_wip", album: "DELTARUNE Chapter 2 OST" });
@@ -221,7 +221,7 @@ register({
 	filename: "rhythm_knockdown_combined",
 	album: "DELTARUNE Chapters 3+4 OST",
 	matches(input, normalized) {
-		return includesNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("rhythm");
+		return includesNormalized(normalized, this.name) && input.toLowerCase().includes("rhythm");
 	},
 });
 register({ name: "Metaphysical Challenge", filename: "board_4_challenge", album: "DELTARUNE Chapters 3+4 OST" });
@@ -296,7 +296,7 @@ register({
 	filename: "ch5_credits",
 	album: "DELTARUNE Chapter 5 OST",
 	matches(input, normalized) {
-		return includesNormalized(normalized, this.normalizedName) && input.toLowerCase().includes("credits");
+		return includesNormalized(normalized, this.name) && input.toLowerCase().includes("credits");
 	},
 	responses: { fieldofhopesanddreams: `"{input}" is incorrect. Be more specific.` },
 });
