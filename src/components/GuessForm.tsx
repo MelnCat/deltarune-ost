@@ -49,7 +49,7 @@ export const GuessForm = ({
 				</Button>
 			</div>
 			<div>
-				<Button type="button" onClick={onGiveUp} disabled={loadState !== "done"}>
+				<Button type="button" onClick={onGiveUp} disabled={loadState !== "done"} className={styles.giveUpButton}>
 					Give Up
 				</Button>
 			</div>

@@ -95,7 +95,7 @@ function RouteComponent() {
 	return (
 		<div className={styles.content}>
 			<header className={`${styles.header} ${styles.streakHeader}`}>
-				<h1>Streak</h1>
+				<h1>SCC</h1>
 				<p data-new={highScore === streak || null}>
 					Current Streak: <NumberFlow value={streak} />
 				</p>
