@@ -1,5 +1,5 @@
 import { matchTrack } from "#/data/ost";
-import { get } from "ts-levenshtein"
+import levenshtein from "ts-levenshtein"
 export const normalizeText = (text: string) => {
 	return text
 		.normalize("NFKD")
