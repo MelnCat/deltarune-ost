@@ -147,5 +147,6 @@ export const useGame = ({
 		enabledWrong,
 		audioCtx,
 		audioStartTime: startTime,
+		setLoadState,
 	};
 };

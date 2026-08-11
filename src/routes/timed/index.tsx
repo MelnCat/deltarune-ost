@@ -45,8 +45,8 @@ function RouteComponent() {
 
 	useInterval(() => {
 		if (timeLeft <= 0) {
-			if (game.loadState !== "results") {
-				game.giveUp();
+			if (game.loadState !== "results" && game.loadState !== "give_up") {
+				game.setLoadState("give_up");
 			}
 		} else if (game.loadState !== "loading" && game.loadState !== "none") {
 			setTimeLeft(Math.max(0, timeLeft - 50));
