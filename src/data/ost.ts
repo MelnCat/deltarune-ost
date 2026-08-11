@@ -1,4 +1,4 @@
-import { equalsNormalized, includesNormalized, normalizeText } from "#/util/text";
+import { equalsNormalized, includesNormalized, isTypoNormalized, normalizeText } from "#/util/text";
 
 const songs = import.meta.glob("./*", { base: "../assets/music", eager: true });
 const sounds = import.meta.glob("./*", { base: "../assets/audiogroup_default", eager: true });
@@ -38,8 +38,11 @@ export class Track {
 		this.matches = args.matches ?? ((input, normalized) => equalsNormalized(normalized, this.normalizedName));
 		this.messageFor =
 			args.messageFor ??
-			((input, normalized) =>
-				normalized in this.responses ? this.responses[normalized].replaceAll("{input}", input) : `"${input}" is incorrect.`);
+			((input, normalized) => {
+				if (normalized in this.responses) return this.responses[normalized].replaceAll("{input}", input);
+                if (isTypoNormalized(this.name, input)) return `"${input}"?`
+				return `"${input}" is incorrect.`;
+			});
 	}
 }
 
