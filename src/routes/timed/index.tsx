@@ -35,7 +35,7 @@ function RouteComponent() {
 			setTimeLeft(Math.min(START_TIME, timeLeft + 5000));
 		},
 		onGiveUp: () => {
-			setTimeLeft(timeLeft - 1000);
+			setTimeLeft(Math.max(0, timeLeft - 1000));
 		},
 		onPlayAgain: () => {
 			setScore(0);
@@ -46,8 +46,8 @@ function RouteComponent() {
 	useInterval(() => {
 		if (timeLeft <= 0) {
 			if (game.loadState !== "results") {
-                game.goToResults();
-            }
+				game.giveUp();
+			}
 		} else if (game.loadState !== "loading" && game.loadState !== "none") {
 			setTimeLeft(Math.max(0, timeLeft - 50));
 		}
@@ -67,7 +67,7 @@ function RouteComponent() {
 				{match(game.loadState)
 					.with("done", () => <h1>Guess the currently playing song.</h1>)
 					.with("correct", () => <h1 className={styles.correct}>Correct!</h1>)
-					.with("give_up", () => <h1 className={styles.failed}>Incorrect.</h1>)
+					.with("give_up", () => <h1 className={styles.failed}>{timeLeft <= 0 ? "Time's up!" : "Incorrect."}</h1>)
 					.otherwise(() => "")}
 				<GuessForm
 					guess={game.guess}
@@ -79,9 +79,15 @@ function RouteComponent() {
 					onGiveUp={game.giveUp}
 					inputRef={game.inputRef}
 					nextAction={
-						<Button type="button" onClick={game.randomize} autoFocus>
-							Next
-						</Button>
+						timeLeft <= 0 ? (
+							<Button type="button" onClick={game.goToResults} autoFocus>
+								Go To Results
+							</Button>
+						) : (
+							<Button type="button" onClick={game.randomize} autoFocus>
+								Next
+							</Button>
+						)
 					}
 				/>
 			</>
