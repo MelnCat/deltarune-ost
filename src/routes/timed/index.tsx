@@ -36,7 +36,6 @@ function RouteComponent() {
 		},
 		onGiveUp: () => {
 			setTimeLeft(timeLeft - 1000);
-			setScore(Math.max(0, score - 1));
 		},
 		onPlayAgain: () => {
 			setScore(0);

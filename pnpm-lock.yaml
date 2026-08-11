@@ -44,6 +44,9 @@ importers:
       react-range-slider-input:
         specifier: ^3.3.5
         version: 3.3.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      ts-levenshtein:
+        specifier: ^1.0.7
+        version: 1.0.7
       ts-pattern:
         specifier: ^5.9.0
         version: 5.9.0
@@ -1682,6 +1685,9 @@ packages:
     engines: {node: '>=18.12'}
     peerDependencies:
       typescript: '>=4.8.4'
+
+  ts-levenshtein@1.0.7:
+    resolution: {integrity: sha512-wautEf7gl2ITJuRTTYxnlrLjzUUcwFSdg46bcu4RlzoE/zQM++TJjBFRf2Xhil49GiHqKCqmpjf1lBkWnAHj0A==}
 
   ts-pattern@5.9.0:
     resolution: {integrity: sha512-6s5V71mX8qBUmlgbrfL33xDUwO0fq48rxAu2LBE11WBeGdpCPOsXksQbZJHvHwhrd3QjUusd3mAOM5Gg0mFBLg==}
@@ -3515,6 +3521,8 @@ snapshots:
   ts-api-utils@2.5.0(typescript@6.0.3):
     dependencies:
       typescript: 6.0.3
+
+  ts-levenshtein@1.0.7: {}
 
   ts-pattern@5.9.0: {}
 

@@ -57,6 +57,7 @@ interface TrackArgs {
 export const tracks: Track[] = [];
 
 export const tracksByName: Record<string, Track> = {};
+export const matchTrack = (input: string) => tracks.find(x => x.matches(input, normalizeText(input)));
 
 const register = (args: TrackArgs) => {
 	const track = new Track(args);

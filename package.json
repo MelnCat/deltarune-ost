@@ -27,6 +27,7 @@
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
 		"react-range-slider-input": "^3.3.5",
+		"ts-levenshtein": "^1.0.7",
 		"ts-pattern": "^5.9.0",
 		"usehooks-ts": "^3.1.1"
 	},

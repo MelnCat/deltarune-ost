@@ -8,7 +8,7 @@ import { ScoreBox } from "#/components/ScoreBox";
 import { VolumeSlider } from "#/components/VolumeSlider";
 import { tracksByName, type Track } from "#/data/ost";
 import { useGame, getVisualizerColor } from "#/util/trivia";
-import { useHighScore } from "#/util/util";
+import { shuffle, useHighScore } from "#/util/util";
 import NumberFlow from "@number-flow/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
@@ -24,6 +24,7 @@ const pool = [
 	"When I Get Happy I Dance Like This",
 	"Sound Studio",
 	"Mini Studio",
+    "Holiday Studio"
 ].map(x => tracksByName[x]);
 
 export const Route = createFileRoute("/scc/")({
@@ -46,7 +47,7 @@ function RouteComponent() {
 		onPlayAgain: () => {
 			setStreak(0);
 		},
-        populatePool: () => pool,
+        populatePool: () => shuffle(pool),
         shouldRepopulatePool: pool => pool.length <= 2
 	});
 
