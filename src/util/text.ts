@@ -27,8 +27,17 @@ export const isTypoNormalized = (correct: string, input: string) => {
 	if (matchTrack(input)) return false;
 	if (levenshtein.distance(correct, input) <= 1) return true;
 	if (isAnagram(correct, input)) return true;
-    if (correct.length === input.length && [...correct].every((x, i) => x === input[i] || (x in keyNeighbors && keyNeighbors[x].includes(input[i])))) return true;
-    return false;
+    let typos = 0;
+    for (const [i, x ]of [...correct].entries()) {
+        if (x === input[i]) continue;
+        if (x in keyNeighbors && keyNeighbors[x].includes(input[i])) {
+            typos++;
+            if (typos > 2) return false;
+        } else {
+            return false;
+        }
+    }
+    return true;
 };
 
 const isAnagram = (a: string, b: string) => {
